@@ -26,17 +26,21 @@ public class OAuthController {
     private final JwtTokenResolver jwtTokenResolver;
     private final UserRepository userRepository;
 
-    @GetMapping("/")
-    public ResponseEntity<LoginResponseDto> index(@RequestHeader String Authorization){
-        Long id = jwtTokenResolver.getId(Authorization);
-        Optional<User> user = userRepository.findById(id);
-        LoginResponseDto dto = new LoginResponseDto(Authorization);
-        if(user.get().getActivityArea().isEmpty()){
-            dto.setJoined(false);
-            return new ResponseEntity<LoginResponseDto>(dto, HttpStatus.OK);
-        }else{
-            return new ResponseEntity<LoginResponseDto>(dto, HttpStatus.OK);
+//    @GetMapping("/")
+//    public ResponseEntity<LoginResponseDto> index(@RequestHeader String Authorization){
+//        Long id = jwtTokenResolver.getId(Authorization);
+//        Optional<User> user = userRepository.findById(id);
+//        LoginResponseDto dto = new LoginResponseDto(Authorization);
+//        if(user.get().getActivityArea().isEmpty()){
+//            dto.setJoined(false);
+//            return new ResponseEntity<LoginResponseDto>(dto, HttpStatus.OK);
+//        }else{
+//            return new ResponseEntity<LoginResponseDto>(dto, HttpStatus.OK);
+//        }
+//    }
+        @GetMapping("/")
+        public String index(@RequestHeader String Authorization){
+            return Authorization;
         }
-    }
 
 }
