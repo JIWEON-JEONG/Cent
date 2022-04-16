@@ -1,13 +1,10 @@
 package goingmerry.cent.dto;
 
 
-import goingmerry.cent.domain.Area;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.util.Map;
 
 @Getter
 @Setter

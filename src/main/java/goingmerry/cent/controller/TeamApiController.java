@@ -1,13 +1,16 @@
 package goingmerry.cent.controller;
 
+import goingmerry.cent.domain.Area;
 import goingmerry.cent.domain.Team;
 import goingmerry.cent.dto.TeamDto;
+import goingmerry.cent.repository.AreaRepository;
 import goingmerry.cent.repository.TeamRepository;
 import goingmerry.cent.repository.UserRepository;
 import goingmerry.cent.service.TeamService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -22,7 +25,9 @@ public class TeamApiController {
 
     private final TeamService teamService;
 
-    private final TeamRepository repository;
+    private final TeamRepository teamRepository;
+
+    private final AreaRepository areaRepository;
 
     @RequestMapping(value = "/exist", method = RequestMethod.GET)
     public Map<String, String> existTeamName(@RequestBody Map<String, String> teamInfo) {
@@ -110,12 +115,30 @@ public class TeamApiController {
     }
 
     //팀의 다른 정보는 제하고, 팀의 이름만 리스트업하는 일반 쿼리 사용한 api
-    @RequestMapping(value = "/list", method = RequestMethod.GET)
+    @RequestMapping(value = "/list/team", method = RequestMethod.GET)
     public List<String> listAllTeam() {
 //        return repository.findAllteamName();
 
-        return repository.findTeamName();
+        return teamRepository.findTeamName();
     }
 
+    //지역을 도 / 시 값으로 전체 출력하는 api, 현재 json으로 list in map의 형식을 띄고 있다.
+    @RequestMapping(value = "/allArea", method = RequestMethod.GET)
+    public List<Map<String, String>> listAllCity() {
 
+        List<Map<String, String>> returnMap = areaRepository.findAllArea();
+
+        return returnMap;
+    }
+
+    //도명을 받아서 시를 추출해내는 api
+    @RequestMapping(value = "/getcity", method = RequestMethod.GET)
+    public List<String> listCityByRegion(@RequestBody Map<String, String> regionName) {
+
+        String region = regionName.get("region");
+
+        List<String> regionList = areaRepository.findCityByRegion(region);
+        log.debug("{}", regionList);
+        return regionList;
+    }
 }

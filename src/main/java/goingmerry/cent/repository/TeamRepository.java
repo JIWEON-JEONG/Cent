@@ -13,12 +13,11 @@ import java.util.Optional;
 public interface TeamRepository extends JpaRepository<Team, Long> {
         Optional<Team> findByTeamName(String TeamName);
 
-        Optional<Team> findByArea(String Area);
-
         @Query(value = "select team_name from team", nativeQuery = true)
         List<String> findTeamName();
 
         void deleteByTeamName(String teamName);
+
 
 //        @Query("UPDATE Team p SET p.TeamName = :TeamName WHERE p.TeamName = :TeamName")
 //        Optional<Team> updateTeamName(String TeamName);
