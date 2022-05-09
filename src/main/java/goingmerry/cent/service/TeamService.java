@@ -1,6 +1,5 @@
 package goingmerry.cent.service;
 
-
 import goingmerry.cent.domain.Team;
 import goingmerry.cent.dto.TeamDto;
 import goingmerry.cent.repository.TeamRepository;
@@ -19,6 +18,9 @@ import java.util.Map;
 public class TeamService {
     @Autowired
     private final TeamRepository teamRepository;
+
+    @Autowired
+    private final FormationService formationService;
 
     //팀명 조회해서 있는지 없는지 판단해주는 메소드
     public boolean isExistTeam(String teamName){
@@ -50,11 +52,11 @@ public class TeamService {
 
         teamRepository.save(dbTeam);
 
+        formationService.createDefaultFormation(team.getTeamName());
         log.info("팀 저장. 저장된 팀 정보 : {}", resultMap);
 
         return resultMap;
     }
-
 
     public Map<String, Boolean> isRequireValueNull(Map<String,String> teamInfo) {
 
@@ -86,6 +88,7 @@ public class TeamService {
         //팀 삭제 시 존재하는 팀을 삭제하는가는 일단 고려하지 않았다. 팀장 한명당 팀 정보는 하나밖에 없을 테니까.
         teamRepository.deleteByTeamName(deleteTeamName);
     }
+
 
     Team toEntity(TeamDto team){
         return Team.builder()

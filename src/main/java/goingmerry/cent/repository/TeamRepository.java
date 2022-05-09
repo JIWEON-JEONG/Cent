@@ -5,19 +5,23 @@ import goingmerry.cent.domain.Team;
 import goingmerry.cent.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 public interface TeamRepository extends JpaRepository<Team, Long> {
+
         Optional<Team> findByTeamName(String TeamName);
 
         @Query(value = "select team_name from team", nativeQuery = true)
         List<String> findTeamName();
 
-        void deleteByTeamName(String teamName);
+        @Query(value = "SELECT p.team_name FROM team p WHERE p.area = :area", nativeQuery = true)
+        List<String> findTeamNameByArea(@Param("area") String area);
 
+        void deleteByTeamName(String teamName);
 
 //        @Query("UPDATE Team p SET p.TeamName = :TeamName WHERE p.TeamName = :TeamName")
 //        Optional<Team> updateTeamName(String TeamName);
@@ -31,4 +35,5 @@ public interface TeamRepository extends JpaRepository<Team, Long> {
 //        //팀이 활동지역을 바꿀까?
 //        @Query("UPDATE Team p SET p.Area = :Area WHERE p.TeamName = :TeamName")
 //        Optional<Team> updateArea(String TeamName, String Area);
+
 }
