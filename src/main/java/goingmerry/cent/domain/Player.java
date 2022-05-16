@@ -13,6 +13,7 @@ import javax.persistence.*;
 public class Player {
     /*
 선수정보 :
+선수이메일 : email
 등번호 : back
 이름 : name
 배치여부 : already
@@ -22,8 +23,7 @@ public class Player {
 주장여부 : leader
      */
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String userEmail;
 
     @Column(nullable = false)
     private String back;
@@ -45,7 +45,8 @@ public class Player {
     private boolean leader;
 
     @Builder
-    public Player(String back, String name, boolean already, String want, String current, String teamName, boolean leader) {
+    public Player(String userEmail, String back, String name, boolean already, String want, String current, String teamName, boolean leader) {
+        this.userEmail = userEmail;
         this.back = back;
         this.name = name;
         this.already = already;
