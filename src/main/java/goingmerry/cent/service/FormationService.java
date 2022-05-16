@@ -56,6 +56,11 @@ int back, int circle, String name, int x, int y, String position, String teamNam
         return players;
     }
         
+    // 포메이션 저장
+    public void saveFormation(List<Formation> formations) {
+        //save에서 업데이트 기능도 해주나?
+        formationRepository.saveAll(formations);
+    }
 
 
 
