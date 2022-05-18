@@ -9,7 +9,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface PlayerRepository extends JpaRepository<Player, Long> {
+public interface PlayerRepository extends JpaRepository<Player, String> {
 
     // 검증 안 됨.
     @Query(value = "SELECT p.back, p.name, p.current, p.already, p.team_name" +
