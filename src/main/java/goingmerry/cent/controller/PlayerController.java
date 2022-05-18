@@ -20,11 +20,14 @@ public class PlayerController {
 
     private final PlayerService playerService;
 
-//    // 새로운 선수를 저장하는 api. 이메일 받아서 검색해서 정보 끌어와서 저장?
-//    @PostMapping(value = "/save")
-//    public void playerSave(@RequestBody Map<String, String> playerInfo) {
-//
-//    }
+    // 새로운 선수를 저장하는 api. 이메일 받아서 검색해서 정보 끌어와서 저장?
+    // playerInfo {playerName, email}
+    @PostMapping(value = "/save")
+    public void playerSave(@RequestBody Map<String, String> playerInfo) {
+
+
+
+    }
 
     @GetMapping(value = "/getuser")
     public List<Map<String, String>> userInfo() {
@@ -33,5 +36,13 @@ public class PlayerController {
 
         log.debug(userList.toString());
         return userList;
+    }
+
+    @GetMapping(value = "/finduser")
+    public Map<String, String> findUserByEmail(@RequestParam String email) {
+
+        Map<String, String> userInfo = playerService.findUserInfo(email);
+
+        return userInfo;
     }
 }
