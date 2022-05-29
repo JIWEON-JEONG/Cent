@@ -2,6 +2,7 @@ package goingmerry.cent.service;
 
 import goingmerry.cent.domain.Formation;
 import goingmerry.cent.domain.Player;
+import goingmerry.cent.dto.PlayerDto;
 import goingmerry.cent.repository.FormationRepository;
 import goingmerry.cent.repository.PlayerRepository;
 import lombok.RequiredArgsConstructor;
@@ -44,11 +45,15 @@ int back, int circle, String name, int x, int y, String position, String teamNam
     }
     
     // 팀명에 해당하는 선수 리스트 가져오기
-    public List<Player> findPlayersByTeamName(String teamName) {
+    public List<PlayerDto> findPlayersByTeamName(String teamName) {
         
-        List<Player> players = null;
+        List<PlayerDto> players = null;
         try {
-            players = playerRepository.findPlayersByTeamName(teamName);
+            List<Player> playerEntity = playerRepository.findPlayersByTeamName(teamName);
+
+            for (int i=0;i<playerEntity.size();i++){
+//                players.add(playerEntity.get(i))
+            }
         }catch (Exception e) {
             log.error("playerList is Null !");
         }
@@ -58,7 +63,7 @@ int back, int circle, String name, int x, int y, String position, String teamNam
         
     // 포메이션 저장
     public void saveFormation(List<Formation> formations) {
-        //save에서 업데이트 기능도 해주나?
+        //save에서 업데이트 기능도 해주나? -> 해주더라
         formationRepository.saveAll(formations);
     }
 

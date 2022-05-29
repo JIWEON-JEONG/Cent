@@ -3,6 +3,7 @@ package goingmerry.cent.controller;
 import goingmerry.cent.domain.DesignateFormation;
 import goingmerry.cent.domain.Formation;
 import goingmerry.cent.domain.Player;
+import goingmerry.cent.dto.PlayerDto;
 import goingmerry.cent.repository.FormationRepository;
 import goingmerry.cent.repository.PlayerRepository;
 import goingmerry.cent.service.FormationDesignService;
@@ -10,6 +11,8 @@ import goingmerry.cent.service.FormationService;
 import goingmerry.cent.service.PlayerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
@@ -58,6 +61,7 @@ public class FormationController {
         return formationList;
     }
 
+    // 드롭다운으로 선택한 포메이션명에 따른 포메이션을 보내준다.
     @GetMapping(value = "/select")
     public List<Map<String, String>> dropDownSelect(@RequestParam String formationName) {
 
@@ -68,13 +72,18 @@ public class FormationController {
         return designedFormation;
     }
 
-    // 선수 리스트에서 해당하는 팀명의 선수 리스트를 꺼내오는 것
-    @GetMapping(value = "/players")
-    public List<Player> playerList(@RequestParam String teamName) {
+    // 선수 리스트에서 해당하는 팀명의 선수 리스트를 꺼내오는 것. 팀 정보 페이지
+    @GetMapping(value = "/players/{teamName}")
+    public ResponseEntity<List<Map<String, Object>>> playerList(@PathVariable String teamName) {
 
-        List<Player> players = null;
-        players = formationService.findPlayersByTeamName(teamName);
-        return players;
+        log.info("[API CALL] : /api/player/players/{}",teamName);
+
+        List<Map<String, Object>> players;
+        HttpStatus status = HttpStatus.OK;
+
+        players = playerService.teamInfoPlayerInfo(teamName);
+
+        return new ResponseEntity<>(players, status);
     }
 
 //    // 포메이션 업데이트 -> save에서 같은 역할 수행하기 때문에 필요 없는 메소드입니다.

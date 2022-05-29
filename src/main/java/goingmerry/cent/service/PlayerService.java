@@ -1,6 +1,5 @@
 package goingmerry.cent.service;
 
-import goingmerry.cent.VO.PlayerVO;
 import goingmerry.cent.domain.Player;
 import goingmerry.cent.domain.User;
 import goingmerry.cent.dto.PlayerDto;
@@ -11,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -25,32 +26,19 @@ public class PlayerService {
 
     private final UserRepository userRepository;
 
+    // 유저 테이블에서 팀 관리 페이지용 조회
     public List<Map<String, String>> findAllUser() {
         log.info("##findAllUser##");
         List<Map<String, String>> userList = userRepository.findUserInfo();
-        log.debug(userList.toString());
+        log.info(userList.toString());
         return userList;
     }
 
-// 선수 저장 구현해야 함
+    // 선수 저장
     public String savePlayer(PlayerDto playerInfo) {
-
-        String playerName = playerInfo.getName();
-        String teamName = playerInfo.getTeamName();
-        String email = playerInfo.getUserEmail();
-
-        Player savePlayer = Player
-                .builder()
-                .name(playerName)
-                .teamName(teamName)
-                .userEmail(email)
-                .already(false)
-                .back(null)
-                .want(null)
-                .current(null)
-                .leader(false)
-                .build();
-
+        log.info("[service player_save call, save player name is {}]",playerInfo.getName());
+        Player savePlayer = toEntity(playerInfo);
+        String playerName = savePlayer.getName();
         playerRepository.save(savePlayer);
 
         return playerName;
@@ -63,46 +51,70 @@ public class PlayerService {
         return userInfo;
     }
 
-    // 신청 목록
-    // 신청한 사람 목록을 테이블을 따로 만들어야 한다.
-    // 신청 페이지 용 -> 특정 선수 정보가 아니라 신청한 사람 정보 전부 다!
-    public void getApplicationList(String teamName) {
+    // 팀 정보 페이지 용, wireflow에서 보여지는 선수 정보. 등번호, 포지션, 선수명 -> 맵 반환
+    public List<Map<String, Object>> teamInfoPlayerInfo(String teamName) {
 
-    }
+        log.info("teamName = {}",teamName);
 
-    // 팀 정보 페이지 용, wireflow에서 보여지는 선수 정보. 등번호, 포지션, 선수명
-    public List<Map<String, String>> teamInfoPlayerInfo() {
+        List<Player> playerDBInfo = playerRepository.findPlayersByTeamName(teamName);
+        List<Map<String, Object>> playerInfo = new ArrayList<>();
 
-        List<Map<String, String>> playerInfo = null;
+        for(int i=0;i<playerDBInfo.size();i++)
+        {
+            playerInfo.add(entityToTeamInfo(playerDBInfo.get(i)));
+        }
+
 
         return playerInfo;
     }
 
-    // 선수 관리 페이지 용, 전체 팀 선수 정보 get
-    public List<PlayerVO> getAllPlayer(String teamName) {
+    // 선수 관리 페이지 용, 팀 전체 선수 정보 get
+    public List<PlayerDto> getAllPlayerByteamName(String teamName) {
 
-        List<PlayerVO> players = null;
+        List<PlayerDto> players = new ArrayList<>();
 
-        List<Player> playerList = playerRepository.findAll();
+        List<Player> entity = playerRepository.findPlayersByTeamName(teamName);
 
-        for(int i=0;i<playerList.size();i++) {
-            PlayerVO playerVO = PlayerVO
-                    .builder()
-                    .name(playerList.get(i).getName())
-                    .teamName(playerList.get(i).getTeamName())
-                    .userEmail(playerList.get(i).getUserEmail())
-                    .already(playerList.get(i).isAlready())
-                    .back(playerList.get(i).getBack())
-                    .want(playerList.get(i).getWant())
-                    .current(playerList.get(i).getCurrent())
-                    .leader(playerList.get(i).isLeader())
-                    .build();
-
-            players.add(playerVO);
+        for (int i=0;i<entity.size();i++) {
+            players.add(new PlayerDto(entity.get(i)));
         }
 
         return players;
     }
 
+    // 팀 정보 페이지를 위해서 엔티티를 원하는 정보로 바꿔주는 메소드.
+    public Map<String, Object> entityToTeamInfo(Player entity) {
+        Map<String, Object> info = new HashMap<>();
+
+        info.put("back", entity.getBack());
+        info.put("name", entity.getName());
+        info.put("current", entity.getCurrent());
+        info.put("want", entity.getWant());
+
+        return info;
+
+    }
+
+    Player toEntity(PlayerDto playerInfo) {
+        String playerName = playerInfo.getName();
+        String teamName = playerInfo.getTeamName();
+        String email = playerInfo.getUserEmail();
+        String back = playerInfo.getBack();
+        boolean already = playerInfo.isAlready();
+
+        log.debug("save start , name : {}, teamName : {}, email : {}",playerName,teamName,email);
+
+        // 기본형 구현, 추가적으로 정보 보내는 내용 확정될 시 수정할 것.
+        return Player.builder()
+                .name(playerName)
+                .teamName(teamName)
+                .userEmail(email)
+                .already(already)
+                .back(back)
+                .want(null)
+                .current(null)
+                .leader(false)
+                .build();
+    }
 
 }
