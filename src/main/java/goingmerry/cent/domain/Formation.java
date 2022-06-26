@@ -24,30 +24,26 @@ y -> null
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String back;
-
-    @Column(nullable = false)
-    private int circle;
-
-    private String name;
-
-    private int x;
-
-    private int y;
-
-    private String position;
+    private String formation;
 
     @Column(nullable = false)
     private String teamName;
 
-    @Builder
-    public Formation(String back, int circle, String name, int x, int y, String position, String teamName) {
-        this.back = back;
-        this.circle = circle;
-        this.name = name;
-        this.x = x;
-        this.y = y;
-        this.position = position;
-        this.teamName = teamName;
-    }
+
+//    포메이션
+//
+//    private String back;
+//
+//    private String name;
+//
+//    private int x;
+//
+//    private int y;
+//
+//    private String position;
+
+
+    // 현재 포메이션 저장
+    // 포메이션 불러오기
+
 }
