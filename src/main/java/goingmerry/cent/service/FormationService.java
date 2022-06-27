@@ -2,6 +2,7 @@ package goingmerry.cent.service;
 
 import goingmerry.cent.domain.Formation;
 import goingmerry.cent.domain.Player;
+import goingmerry.cent.dto.FormationDto;
 import goingmerry.cent.dto.PlayerDto;
 import goingmerry.cent.repository.FormationRepository;
 import goingmerry.cent.repository.PlayerRepository;
@@ -21,6 +22,51 @@ public class FormationService {
     
     private final PlayerRepository playerRepository;
 
+
+    public FormationDto getFormation(String teamName) {
+
+        FormationDto currentFormation = new FormationDto();
+        Formation formation = formationRepository.findFormationByTeamName(teamName);
+
+        currentFormation.setTeamName(formation.getTeamName());
+        currentFormation.setFormation(formation.getFormation());
+        return currentFormation;
+    }
+
+    // 팀 생성 시 기본 11개의 포메이션판 생성. 차후 기본 포메이션 값 지정해서 넣을 예정
+    public FormationDto createDefaultFormation(String teamName) {
+
+        log.info("팀 최초 생성, 기본 포메이션 생성!");
+
+        String defaultFormation = "4421";
+        Formation formation = Formation
+                .builder()
+                .formation(defaultFormation)
+                .teamName(teamName)
+                .build();
+
+        formationRepository.save(formation);
+
+        FormationDto formationDto = new FormationDto();
+        formationDto.setTeamName(formation.getTeamName());
+        formationDto.setFormation(formation.getFormation());
+
+        return formationDto;
+    }
+
+
+    // 포메이션 저장
+    public FormationDto saveFormation(FormationDto formation) {
+        //save에서 업데이트 기능도 해주나? -> 해주더라
+
+        Formation entity = Formation.builder()
+                .formation(formation.getFormation())
+                .teamName(formation.getTeamName())
+                .build();
+
+        formationRepository.save(entity);
+        return formation;
+    }
 
 
 //

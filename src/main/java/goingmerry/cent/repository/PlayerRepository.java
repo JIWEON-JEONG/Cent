@@ -16,6 +16,9 @@ public interface PlayerRepository extends JpaRepository<Player, String> {
     //전체 선수 목록 get
     List<Player> findPlayersByTeamName(String teamName);
 
+    int countPlayersByTeamName(String teamName);
+
+
 //    // 팀 정보 페이지 용, wireflow에서 보여지는 선수 정보. 등번호, 포지션, 선수명
 //    @Query(value = "SELECT p.user_email, p.back, p.name, p.current, p.want" +
 //            " FROM player p WHERE p.team_name = :team_name ", nativeQuery = true)

@@ -1,6 +1,5 @@
 package goingmerry.cent.domain;
 
-import com.nimbusds.openid.connect.sdk.federation.policy.language.StringListConfiguration;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,7 +25,7 @@ public class Player {
     private String userEmail;
 
     @Column(nullable = false)
-    private String back;
+    private String back; // 등번호는 어디서 받아? -> 물어보기
 
     @Column(nullable = false)
     private String name;
@@ -42,10 +41,19 @@ public class Player {
     @Column(nullable = false)
     private String teamName;
 
-    private boolean leader;
+    private boolean leader; // 주장여부
+
+    @Column(nullable = true)
+    private Integer formationIndex; // 현재 원 번호? -> 선발 선수들
+    /*
+    포메이션(선수 정보) 저장 api 1
+    불러오는 api 1
+     */
+
+    // 팀 관리에서 명단 볼때는 맴버 긁어오나 선수 긁어오나?
 
     @Builder
-    public Player(String userEmail, String back, String name, boolean already, String want, String current, String teamName, boolean leader) {
+    public Player(String userEmail, String back, String name, boolean already, String want, String current, String teamName, boolean leader, Integer formationIndex) {
         this.userEmail = userEmail;
         this.back = back;
         this.name = name;
@@ -54,5 +62,9 @@ public class Player {
         this.current = current;
         this.teamName = teamName;
         this.leader = leader;
+        this.formationIndex = formationIndex;
     }
 }
+
+
+

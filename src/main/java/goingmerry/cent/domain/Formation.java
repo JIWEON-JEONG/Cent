@@ -21,16 +21,18 @@ y -> null
 포지션 : position
     * */
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    private String formation;
-
-    @Column(nullable = false)
     private String teamName;
 
+    @Column(nullable = false)
+    private String formation;
 
-//    포메이션
+    @Builder
+    public Formation(String formation, String teamName) {
+        this.formation = formation;
+        this.teamName = teamName;
+    }
+
+    //    포메이션
 //
 //    private String back;
 //
