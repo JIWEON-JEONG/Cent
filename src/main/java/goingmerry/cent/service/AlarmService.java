@@ -1,6 +1,7 @@
 package goingmerry.cent.service;
 
 import goingmerry.cent.domain.Alarm;
+import goingmerry.cent.dto.alarm.AlarmDto;
 import goingmerry.cent.dto.alarm.getAlarmDto;
 import goingmerry.cent.dto.alarm.saveAlarmDto;
 import goingmerry.cent.repository.AlarmRepository;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -47,6 +49,20 @@ public class AlarmService {
 
         return response;
     }
+
+    public Long delete(Long id) {
+
+        Optional<Alarm> delAlarm = alarmRepository.findById(id);
+        if(delAlarm.isPresent()) {
+            Alarm alarm = delAlarm.get();
+        } else {
+            throw new NullPointerException();
+        }
+        alarmRepository.deleteById(delAlarm.get().getId());
+
+        return delAlarm.get().getId();
+    }
+
 
 
     public Alarm toEntity(saveAlarmDto saveDto) {

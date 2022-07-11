@@ -1,5 +1,6 @@
 package goingmerry.cent.controller;
 
+import goingmerry.cent.dto.alarm.AlarmDto;
 import goingmerry.cent.dto.alarm.getAlarmDto;
 import goingmerry.cent.dto.alarm.saveAlarmDto;
 import goingmerry.cent.service.AlarmService;
@@ -10,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -56,6 +58,15 @@ public class AlarmController {
         log.info("User {} is create Alarm, status is {}", response.getToEmail(), response.getValue());
 
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @DeleteMapping(value = "/delete")
+    public ResponseEntity<Long> deleteAlarm(@RequestBody AlarmDto dto) {
+        log.info("[API CALL : /api/alarm/delete," +
+                " fromUser : {}, teamName : {}, toUser : {}]", dto.getFromEmail(), dto.getTeamName(), dto.getToEmail());
+        Long id = alarmService.delete(dto.getId());
+
+        return new ResponseEntity<>(id, HttpStatus.OK);
     }
 
 }
