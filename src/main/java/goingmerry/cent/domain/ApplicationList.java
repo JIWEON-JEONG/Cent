@@ -4,17 +4,17 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
 @NoArgsConstructor
-public class ApplicationList {
+@Getter
+public class ApplicationList extends BaseTimeEntity{
 
     // 신청 목록
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
@@ -36,4 +36,7 @@ public class ApplicationList {
         this.teamName = teamName;
         this.status = status;
     }
+
+    // 선수 팀 가입 시 신청 삭제 로직 생성
+    //
 }
