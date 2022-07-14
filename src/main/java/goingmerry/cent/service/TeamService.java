@@ -29,8 +29,7 @@ public class TeamService {
             return false;
         }
         else {
-            String existTeamName = teamName;
-            log.info("Exist TeamName : {}", existTeamName);
+            log.info("Exist TeamName : {}", teamName);
             return true;
         }
     }
@@ -46,13 +45,13 @@ public class TeamService {
         resultMap.put("활동지역", team.getArea());
 
         //팀의 업데이트 또한 여기서 판단한다. 업데이트 하는 경우는 일단 필수값 이외 필드로 한정한다.
-        Team dbTeam = dbTeam = teamRepository.findByTeamName(team.getTeamName())
+        Team dbTeam = teamRepository.findByTeamName(team.getTeamName())
                 .map(entity -> entity.update(team.getIntro(), team.getLogo()))
                         .orElse(toEntity(team));
 
         teamRepository.save(dbTeam);
 
-        formationService.createDefaultFormation(team.getTeamName());
+//        formationService.createDefaultFormation(team.getTeamName()); // 기본 포메이션 생성 -> 현재 사용하지 않음.
         log.info("팀 저장. 저장된 팀 정보 : {}", resultMap);
 
         return resultMap;

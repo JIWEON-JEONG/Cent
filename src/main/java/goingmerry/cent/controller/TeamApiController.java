@@ -1,16 +1,14 @@
 package goingmerry.cent.controller;
 
-import goingmerry.cent.domain.Area;
-import goingmerry.cent.domain.Team;
+import goingmerry.cent.dto.FormationDto;
 import goingmerry.cent.dto.TeamDto;
 import goingmerry.cent.repository.AreaRepository;
 import goingmerry.cent.repository.TeamRepository;
-import goingmerry.cent.repository.UserRepository;
+
+import goingmerry.cent.service.FormationService;
 import goingmerry.cent.service.TeamService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -28,6 +26,8 @@ public class TeamApiController {
     private final TeamRepository teamRepository;
 
     private final AreaRepository areaRepository;
+
+    private final FormationService formationService;
 
     @RequestMapping(value = "/exist", method = RequestMethod.GET)
     public Map<String, String> existTeamName(@RequestBody Map<String, String> teamInfo) {
@@ -59,9 +59,9 @@ public class TeamApiController {
         //팀의 이름 또는 활동지역은 필수값이기 때문에 들어가지 않은 채로 요청이 오면 디비 입력이 안되게 했다.
         //사실 프론트에서 해줘서 굳이 필요 있는 로직은 아니긴 하다.
         boolean isTeamNameNull = teamService.isRequireValueNull(teamInfo).get("teamName");
-        log.error(String.valueOf(isTeamNameNull));
+        log.error("isTeamNameNull? : {}", isTeamNameNull);
         boolean isAreaNull = teamService.isRequireValueNull(teamInfo).get("area");
-        log.error(String.valueOf(isAreaNull));
+        log.error("isAreaNull? : {}", isAreaNull);
         if (isTeamNameNull || isAreaNull){
             if (isTeamNameNull) {
                 returnMap.put("TeamName Is Null!!", "팀명은 필수 값 입니다.");
@@ -92,6 +92,11 @@ public class TeamApiController {
                 log.info("start save this team : " + team.getTeamName());
                 returnMap = teamService.createTeam(team);
                 log.info("Response : {}", returnMap);
+
+                // 6.26 포메이션 자동 생성 로직 추가
+
+                FormationDto dto = formationService.createDefaultFormation(teamName);
+                returnMap.put("defaultFormation",dto.getFormation());
             }
             else {
                 returnMap.put("ErrorMsg", "its exist TeamName, Dont save!");
@@ -138,9 +143,10 @@ public class TeamApiController {
     @RequestMapping(value = "/allArea", method = RequestMethod.GET)
     public List<Map<String, String>> listAllCity() {
 
-        List<Map<String, String>> returnMap = areaRepository.findAllArea();
-
-        return returnMap;
+//        List<Map<String, String>> returnMap = areaRepository.findAllArea();
+//
+//        return returnMap;
+        return areaRepository.findAllArea();
     }
 
     //도명을 받아서 시를 추출해내는 api
@@ -159,9 +165,10 @@ public class TeamApiController {
     public List<String> listTeamNameByCity(@RequestParam Map<String, String> area) {
 
         String city = area.get("city");
-        List<String> returnList = teamRepository.findTeamNameByArea(city);
-
-        return returnList;
+//        List<String> returnList = teamRepository.findTeamNameByArea(city);
+//
+//        return returnList;
+        return teamRepository.findTeamNameByArea(city);
     }
 
 }
