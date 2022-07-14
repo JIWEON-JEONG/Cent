@@ -11,7 +11,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class saveAlarmDto {
 
-        private String fromEmail; // 누가
+    private String fromEmail; // 누가
 
     // notnull
     private String toEmail; // 누구에게

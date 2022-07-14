@@ -35,16 +35,16 @@ public class getAlarmDto {
         this.toEmail = entity.getToEmail();
         this.teamName = entity.getTeamName();
         this.value = entity.getValue();
-        this.createDate = toStringDateTime(entity.getCreateDate());
+        this.createDate = entity.getCreateDate();
     }
-
-    public String toStringDateTime(LocalDateTime localDateTime){
-        if(localDateTime == null){
-            return "";
-        }
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        return formatter.format(localDateTime);
-    }
+//    basetimeentity -> String 형으로 변경했기 때문에 필요 없어짐.
+//    public String toStringDateTime(LocalDateTime localDateTime){
+//        if(localDateTime == null){
+//            return "";
+//        }
+//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+//        return formatter.format(localDateTime);
+//    }
 
 
 }
