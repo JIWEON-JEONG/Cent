@@ -5,11 +5,15 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.DynamicUpdate;
 
 @Setter
 @Getter
 @NoArgsConstructor
+@DynamicUpdate
 public class PlayerDto {
+
+    private Long id;
 
     private String userEmail;
 

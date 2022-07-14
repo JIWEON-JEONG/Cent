@@ -22,6 +22,10 @@ public class Player {
 주장여부 : leader
      */
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false)
     private String userEmail;
 
     @Column(nullable = false)
@@ -52,8 +56,11 @@ public class Player {
 
     // 팀 관리에서 명단 볼때는 맴버 긁어오나 선수 긁어오나?
 
+//    User : Player = 1:1
+
     @Builder
-    public Player(String userEmail, String back, String name, boolean already, String want, String current, String teamName, boolean leader, Integer formationIndex) {
+    public Player(Long id, String userEmail, String back, String name, boolean already, String want, String current, String teamName, boolean leader, Integer formationIndex) {
+        this.id = id;
         this.userEmail = userEmail;
         this.back = back;
         this.name = name;
