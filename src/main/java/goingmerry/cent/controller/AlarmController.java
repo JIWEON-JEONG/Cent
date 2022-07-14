@@ -60,13 +60,20 @@ public class AlarmController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+//    @DeleteMapping(value = "/delete")
+//    public ResponseEntity<Long> deleteAlarm(@RequestBody AlarmDto dto) {
+//        log.info("[API CALL : /api/alarm/delete," +
+//                " fromUser : {}, teamName : {}, toUser : {}]", dto.getFromEmail(), dto.getTeamName(), dto.getToEmail());
+//        Long id = alarmService.delete(dto.getId());
+//
+//        return new ResponseEntity<>(id, HttpStatus.OK);
+//    }
     @DeleteMapping(value = "/delete")
-    public ResponseEntity<Long> deleteAlarm(@RequestBody AlarmDto dto) {
-        log.info("[API CALL : /api/alarm/delete," +
-                " fromUser : {}, teamName : {}, toUser : {}]", dto.getFromEmail(), dto.getTeamName(), dto.getToEmail());
-        Long id = alarmService.delete(dto.getId());
+    public ResponseEntity<Long> deleteAlarm(@RequestParam Long id) {
+        log.info("[API CALL : /api/alarm/delete, alarmId={}");
+        Long deleteId = alarmService.delete(id);
 
-        return new ResponseEntity<>(id, HttpStatus.OK);
+        return new ResponseEntity<>(deleteId, HttpStatus.OK);
     }
 
 }
