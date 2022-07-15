@@ -1,4 +1,4 @@
-package goingmerry.cent.dto;
+package goingmerry.cent.dto.player;
 
 import goingmerry.cent.domain.Player;
 import lombok.Builder;
@@ -49,16 +49,16 @@ public class PlayerDto {
         this.leader = entity.isLeader();
         this.formationIndex = entity.getFormationIndex();
     }
-
-    public PlayerDto(String userEmail, String back, String name, boolean already, String want, String current, String teamName, boolean leader, Integer formationIndex) {
-        this.userEmail = userEmail;
-        this.back = back;
-        this.name = name;
-        this.already = already;
-        this.want = want;
-        this.current = current;
-        this.teamName = teamName;
-        this.leader = leader;
-        this.formationIndex = formationIndex;
-    }
+//
+//    public PlayerDto(String userEmail, String back, String name, boolean already, String want, String current, String teamName, boolean leader, Integer formationIndex) {
+//        this.userEmail = userEmail;
+//        this.back = back;
+//        this.name = name;
+//        this.already = already;
+//        this.want = want;
+//        this.current = current;
+//        this.teamName = teamName;
+//        this.leader = leader;
+//        this.formationIndex = formationIndex;
+//    }
 }

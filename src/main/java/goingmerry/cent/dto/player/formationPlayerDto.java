@@ -1,4 +1,4 @@
-package goingmerry.cent.dto;
+package goingmerry.cent.dto.player;
 
 
 import goingmerry.cent.domain.Player;
