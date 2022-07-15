@@ -6,7 +6,7 @@ import lombok.Getter;
 
 @Getter
 public class LoginResponseDto {
-    private String accessToken;
+    private final String accessToken;
     private boolean isJoined = true;
 
     @Builder

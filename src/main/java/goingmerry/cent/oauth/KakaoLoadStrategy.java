@@ -24,21 +24,17 @@ public class KakaoLoadStrategy extends SocialLoadStrategy {
             Long userId = (Long) response.getBody().get("id");
             Map<String,Object> properties = (Map<String, Object>) response.getBody().get("properties");
             Map<String,Object> account = (Map<String, Object>) response.getBody().get("kakao_account");
-            Map<String,Object> profile = (Map<String, Object>) account.get("profile");
-            log.info("##properties##\n" + properties);
-            log.info("##account##\n" + account);
-            log.info("##profile##\n" + profile);
 
             return OAuth2UserDetails.builder()
                     .userId(userId)
-                    .username((String) profile.get("nickname"))
+                    .username((String) properties.get("nickname"))
                     .socialType(SocialType.KAKAO)
                     .userImage((String)properties.get("profile_image"))
                     .ageRange((String)account.get("age_range"))
                     .gender((String)account.get("gender"))
                     .birth((String)account.get("birthday"))
-                    .email((String) account.get("email"))
                     .build();
+
 
 
         } catch (Exception e) {

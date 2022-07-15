@@ -16,9 +16,9 @@ public enum SocialType {
     );
 
 
-    private String socialName;
-    private String userInfoUrl;
-    private HttpMethod method;
+    private final String socialName;
+    private final String userInfoUrl;
+    private final HttpMethod method;
 
     SocialType(String socialName, String userInfoUrl, HttpMethod method) {
         this.socialName = socialName;

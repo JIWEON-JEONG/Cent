@@ -26,4 +26,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
         // 특정 유저 정보의 검색 by email
         @Query(value = "SELECT p.user_name, p.email, p.position, p.activity_area, p.age_range" + " FROM user p WHERE p.email = :email", nativeQuery = true)
         Map<String, String> findUserInfoByEmail(@Param("email") String email);
+
+        // 팀장이 팀원 추가를 위해서 검색할 때 쓰는 용도
+        //select * from user where email like '~~~' or user_name like '~~~' or nick_name like '~~~';
+        @Query(value = "SELECT * FROM user p WHERE p.email LIKE %:info% OR p.user_name LIKE %:info%", nativeQuery = true)
+        List<User> findUserInfo(@Param("info") String info);
+
 }
