@@ -1,6 +1,7 @@
 package goingmerry.cent.dto;
 
 
+import goingmerry.cent.domain.Team;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,6 +12,8 @@ import lombok.Setter;
 @NoArgsConstructor
 public class TeamDto {
 
+    private Long id;
+
     private String teamName;
 
     private String logo;
@@ -19,11 +22,18 @@ public class TeamDto {
 
     private String area;
 
+    private Long leaderId;
+
+    private String formationName;
+
     @Builder
-    public TeamDto(String teamName, String logo, String intro, String area) {
-        this.teamName = teamName;
-        this.logo = logo;
-        this.intro = intro;
-        this.area = area;
+    public TeamDto(Team entity) {
+        this.id = entity.getId();
+        this.teamName = entity.getTeamName();
+        this.logo = entity.getLogo();
+        this.intro = entity.getIntro();
+        this.area = entity.getArea();
+        this.leaderId = entity.getLeaderUser().getId();
+        this.formationName = entity.getFormationName();
     }
 }

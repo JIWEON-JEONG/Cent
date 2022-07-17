@@ -46,46 +46,46 @@ public class FormationController {
      *       }
      * }
      */
-    // JSONObject 사용 필요
-    @GetMapping(value = "/get")
-    public ResponseEntity listFormation(@RequestParam String teamName) {
-        log.info("[API CALL : /api/formation/get, Team is \"{}\" ]", teamName);
-        JSONObject response = new JSONObject();
-
-        // 존재하지 않는 팀일 경우
-        if(!teamService.isExistTeam(teamName)) {
-
-            log.error("is not exist team!");
-            response.put("ERROR","is not exist team!");
-
-            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-        }
-
-        FormationDto formationDto = formationService.getFormation(teamName);
-        JSONObject formationObject = new JSONObject(); // team info
-
-        formationObject.put("teamName", formationDto.getTeamName());
-        formationObject.put("formation", formationDto.getFormation());
-
-        response.put("teamInfo", formationObject);
-
-        JSONArray playerList = new JSONArray();
-
-        int playerCount = playerService.countPlayer(teamName);
-        log.info("current team player Count = {}", playerCount);
-        List<PlayerDto> players = playerService.getAllPlayerByTeamName(teamName);
-
-        for(int i=0;i<playerCount;i++) {
-            playerList.add(players.get(i));
-        }
-
-        response.put("playerList", playerList);
-        log.info(response.toJSONString());
-
-        return new ResponseEntity<>(response, HttpStatus.OK);
-
-
-    }
+//    // JSONObject 사용 필요
+//    @GetMapping(value = "/get")
+//    public ResponseEntity listFormation(@RequestParam String teamName) {
+//        log.info("[API CALL : /api/formation/get, Team is \"{}\" ]", teamName);
+//        JSONObject response = new JSONObject();
+//
+//        // 존재하지 않는 팀일 경우 -> 경우 없는데 일단 만든거
+//        if(!teamService.isExistTeam(teamName)) {
+//
+//            log.error("is not exist team!");
+//            response.put("ERROR","is not exist team!");
+//
+//            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+//        }
+//
+//        FormationDto formationDto = formationService.getFormation(teamName);
+//        JSONObject formationObject = new JSONObject(); // team info
+//
+//        formationObject.put("teamName", formationDto.getTeamName());
+//        formationObject.put("formation", formationDto.getFormation());
+//
+//        response.put("teamInfo", formationObject);
+//
+//        JSONArray playerList = new JSONArray();
+//
+//        int playerCount = playerService.countPlayer(teamName);
+//        log.info("current team player Count = {}", playerCount);
+//        List<PlayerDto> players = playerService.getAllPlayerByTeamName(teamName);
+//
+//        for(int i=0;i<playerCount;i++) {
+//            playerList.add(players.get(i));
+//        }
+//
+//        response.put("playerList", playerList);
+//        log.info(response.toJSONString());
+//
+//        return new ResponseEntity<>(response, HttpStatus.OK);
+//
+//
+//    }
 
 
 //    //전술판(포메이션)을 post 로 받아 데이터베이스에 저장한다.
@@ -100,45 +100,45 @@ public class FormationController {
 //    }
 
     // 포메이션 및 선수 리스트의 변경점 업데이트
-    @PostMapping(value = "/update")
-    public ResponseEntity saveFormation(@RequestBody JSONObject json) throws Exception {
+//    @PostMapping(value = "/update")
+//    public ResponseEntity saveFormation(@RequestBody JSONObject json) throws Exception {
+//
+//        log.info("[API CALL : /api/formation/save");
+//        log.info("{}\n",json.toJSONString());
+//
+//        Object listOb = json.get("playerList");
+//        Object formationOb = json.get("teamInfo");
+//
+//        log.info("listOb : {}\n",listOb);
+//        log.info("formationOb : {}\n",formationOb);
+//
+//        ObjectMapper mapper = new ObjectMapper();
+//        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false); //파라미터Map에서 DTO에 들어있지 않는 변수가 있어도 무시함.
+//
+//        List<PlayerDto> playerList = Arrays.asList(mapper.convertValue(listOb, PlayerDto[].class));
+//        FormationDto formation = mapper.convertValue(formationOb,FormationDto.class);
+//
+//        System.out.println("teamName : " + formation.getTeamName() +"\nformation : "+ formation.getFormation());
+//        formationService.saveFormation(formation);
+//        playerService.updatePlayers(playerList);
+//
+//        JSONObject response = new JSONObject();
+//
+//        response.put("teamName", formation.getTeamName());
+//        response.put("formation", formation.getFormation());
+//        JSONArray players = new JSONArray();
+//
+//        List<PlayerDto> teamPlayers = playerService.getAllPlayerByTeamName(formation.getTeamName());
+//
+//        for(int i=0;i<teamPlayers.size();i++) {
+//            players.add(teamPlayers.get(i));
+//        }
+//        response.put("playerList", players);
+//
+//        return new ResponseEntity<>(response,HttpStatus.OK);
+//    }
 
-        log.info("[API CALL : /api/formation/save");
-        log.info("{}\n",json.toJSONString());
-
-        Object listOb = json.get("playerList");
-        Object formationOb = json.get("teamInfo");
-
-        log.info("listOb : {}\n",listOb);
-        log.info("formationOb : {}\n",formationOb);
-
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false); //파라미터Map에서 DTO에 들어있지 않는 변수가 있어도 무시함.
-
-        List<PlayerDto> playerList = Arrays.asList(mapper.convertValue(listOb, PlayerDto[].class));
-        FormationDto formation = mapper.convertValue(formationOb,FormationDto.class);
-
-        System.out.println("teamName : " + formation.getTeamName() +"\nformation : "+ formation.getFormation());
-        formationService.saveFormation(formation);
-        playerService.updatePlayers(playerList);
-
-        JSONObject response = new JSONObject();
-
-        response.put("teamName", formation.getTeamName());
-        response.put("formation", formation.getFormation());
-        JSONArray players = new JSONArray();
-
-        List<PlayerDto> teamPlayers = playerService.getAllPlayerByTeamName(formation.getTeamName());
-
-        for(int i=0;i<teamPlayers.size();i++) {
-            players.add(teamPlayers.get(i));
-        }
-        response.put("playerList", players);
-
-        return new ResponseEntity<>(response,HttpStatus.OK);
-    }
-
-
+//######################################################################################
 
     // 22.6.26 기존 코드 주석처리.
 //    @GetMapping(value = "/get")

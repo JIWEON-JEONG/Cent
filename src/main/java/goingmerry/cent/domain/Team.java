@@ -1,11 +1,12 @@
 package goingmerry.cent.domain;
 
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
-
+@Getter
 @NoArgsConstructor
 @Entity
 public class Team extends BaseTimeEntity{
@@ -26,14 +27,27 @@ public class Team extends BaseTimeEntity{
 //    @Enumerated(EnumType.STRING)
 //    private Area area;
 
+    private String formationName;
+
+    // user 1:1
+    @OneToOne(mappedBy = "team")
+    private User user;
+
+    // user 1:1, teamLeader : 팀장
+    @OneToOne
+    @JoinColumn(name = "leader_id")
+    private User leaderUser;
+
     @Builder
-    public Team(String teamName, String logo, String intro, String area) {
+    public Team(String teamName, String logo, String intro, String area, String formationName, User leaderUser) {
+
         this.teamName = teamName;
         this.logo = logo;
         this.intro = intro;
         this.area = area;
+        this.formationName = formationName;
+        this.leaderUser = leaderUser;
     }
-
 
     public Team update(String intro, String logo) {
         this.intro = intro;
