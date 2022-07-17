@@ -1,7 +1,7 @@
 package goingmerry.cent.dto;
 
 import goingmerry.cent.domain.Role;
-import goingmerry.cent.domain.SocialType;
+import goingmerry.cent.domain.User;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -24,13 +24,12 @@ public class UserDto {
     private String birth;
     private String userImage;
     private Long userId;
-    @Enumerated(EnumType.STRING)
-    private SocialType socialType;
+
     @Enumerated(EnumType.STRING)
     private Role role;
 
     @Builder
-    public UserDto(String userName, String email, String gender, String ageRange, String birth, String userImage, Long userId, SocialType socialType, Role role) {
+    public UserDto(User entity) {
         this.userName = userName;
         this.email = email;
         this.gender = gender;
@@ -38,7 +37,6 @@ public class UserDto {
         this.birth = birth;
         this.userImage = userImage;
         this.userId = userId;
-        this.socialType = socialType;
         this.role = role;
     }
 }

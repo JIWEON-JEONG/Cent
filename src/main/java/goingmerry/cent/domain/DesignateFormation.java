@@ -1,11 +1,5 @@
 package goingmerry.cent.domain;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-
-import javax.persistence.*;
-
-
 // 포메이션 변경으로 필요 X
 //@Getter
 //@NoArgsConstructor

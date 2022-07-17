@@ -1,45 +1,85 @@
 package goingmerry.cent.domain;
 
 import goingmerry.cent.dto.UserSaveDto;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Entity
-public class User extends BaseTimeEntity{
+public class User extends BaseTimeEntity implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long id;    //DB 저장 인덱스
 
     private String userName;
 
-    private String email;
+    private String nickName;
+
+    private String email;   //ID
+
+    private String password;    //Password
 
     private String activityArea = "";
 
-    private String Position;
+    private String position;
 
     private boolean isExpert;
 
     private String gender;
 
-    private String ageRange;
+    private String birthDate;
 
-    private String birth;
+    private boolean emailAuth;
 
-    private String userImage;
+//  player | user 통합
+//
+//    private String back;
+//
+//    @Column(nullable = false)
+//    private boolean already;
+//
+//    private boolean idCaptain;
+//
+//    private Integer formationIndex;
 
-    private Long userId;
+    @OneToOne(mappedBy = "user")
+    private Player player;
 
-    @Enumerated(EnumType.STRING)
-    private SocialType socialType;
 
-    @Enumerated(EnumType.STRING)
-    private Role role;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @Builder.Default
+    private List<String> roles = new ArrayList<>();
+
+//    //연관관계 주인
+//    // team 삽입 , 삭제 , 수정 다 가능.
+    @OneToOne
+    @JoinColumn(name = "team_id")
+    private Team team;
+
+
+    @OneToOne(mappedBy = "user1")
+    private Team team1;
+
+    public void setEmailAuth(boolean emailAuth) {
+        this.emailAuth = emailAuth;
+    }
 
 //    @OneToOne
 //    @JoinColumn(name = "team_id")
@@ -48,21 +88,52 @@ public class User extends BaseTimeEntity{
 
 
     @Builder
-    public User(String userName, String email, String gender, String ageRange, String birth, String userImage, Long userId, SocialType socialType, Role role) {
-        this.userName = userName;
+    public User(String email, String password, List<String> roles) {
         this.email = email;
-        this.gender = gender;
-        this.ageRange = ageRange;
-        this.birth = birth;
-        this.userImage = userImage;
-        this.userId = userId;
-        this.socialType = socialType;
-        this.role = role;
+        this.password = password;
+        this.roles = roles;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return this.roles.stream()
+                .map(SimpleGrantedAuthority::new)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public String getPassword() {
+        return password;
+    }
+
+    @Override
+    public String getUsername() {
+        return email;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
     }
 
     public void additionalInfo(UserSaveDto userSaveDto) {
         this.activityArea = userSaveDto.getActivityArea();
-        this.Position = userSaveDto.getPosition();
+        this.position = userSaveDto.getPosition();
         this.isExpert = userSaveDto.isExpert();
     }
 }

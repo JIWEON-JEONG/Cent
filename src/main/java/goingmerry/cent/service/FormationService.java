@@ -1,17 +1,12 @@
 package goingmerry.cent.service;
 
 import goingmerry.cent.domain.Formation;
-import goingmerry.cent.domain.Player;
 import goingmerry.cent.dto.FormationDto;
-import goingmerry.cent.dto.PlayerDto;
 import goingmerry.cent.repository.FormationRepository;
 import goingmerry.cent.repository.PlayerRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Slf4j
 @Service
@@ -33,7 +28,7 @@ public class FormationService {
         return currentFormation;
     }
 
-    // 팀 생성 시 기본 11개의 포메이션판 생성. 차후 기본 포메이션 값 지정해서 넣을 예정
+    // 팀 생성 시 기본 포메이션 생성
     public FormationDto createDefaultFormation(String teamName) {
 
         log.info("팀 최초 생성, 기본 포메이션 생성!");

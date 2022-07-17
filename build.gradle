@@ -1,12 +1,21 @@
+buildscript {
+	ext {
+		queryDslVersion = "5.0.0"
+	}
+}
+
 plugins {
 	id 'org.springframework.boot' version '2.6.4'
 	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+	id "com.ewerk.gradle.plugins.querydsl" version "1.0.10"
 	id 'java'
 }
 
 group = 'goingmerry'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
+
+ext["hibernate.version"] = "5.6.5.Final"
 
 configurations {
 	compileOnly {
@@ -26,17 +35,17 @@ dependencies {
 	runtimeOnly 'mysql:mysql-connector-java'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	implementation'com.google.code.gson:gson:2.8.7'
+	implementation 'com.google.code.gson:gson:2.8.7'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	// https://mvnrepository.com/artifact/com.github.spullara.mustache.java/compiler : (test 사용자 화면 html로 보기 위해 임시 import)
 	implementation 'org.springframework.boot:spring-boot-starter-mustache'
-	// https://mvnrepository.com/artifact/org.springframework.security/spring-security-oauth2-client : redirect 주소 자동 라이브러리 연결 (컨트롤러 사용하지 않아도 됨)
-	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client:2.4.4'
-	//JWT
 	implementation 'io.jsonwebtoken:jjwt:0.9.1'
-	implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.2'
-	implementation group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.2'
-	implementation group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.2'
+	//mail
+	implementation 'org.springframework.boot:spring-boot-starter-mail'
+
+	//querydsl
+	implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
+	implementation "com.querydsl:querydsl-apt:${queryDslVersion}"
 	//jsonmapper
 	implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.10.5'
 	implementation group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1.1'
@@ -45,3 +54,29 @@ dependencies {
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+//querydsl 추가 시작
+def querydslDir = "$buildDir/generated/querydsl"
+
+querydsl {
+	jpa = true
+	querydslSourcesDir = querydslDir
+}
+sourceSets {
+	main.java.srcDir querydslDir
+}
+compileQuerydsl{
+	options.annotationProcessorPath = configurations.querydsl
+}
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+	querydsl.extendsFrom compileClasspath
+}
+
+//Querydsl 추가, 자동 생성된 Q클래스 gradle clean으로 제거
+clean {
+	delete file('src/main/generated')
+}
+

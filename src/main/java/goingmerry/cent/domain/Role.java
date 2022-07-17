@@ -6,7 +6,7 @@ public enum Role {
     LEADER("ROLE_LEADER"),
     ADMIN("ROLE_ADMIN");
 
-    private String grantedAuthority;
+    private final String grantedAuthority;
 
     Role(String grantedAuthority) {
         this.grantedAuthority = grantedAuthority;

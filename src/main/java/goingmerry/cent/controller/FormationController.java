@@ -1,18 +1,11 @@
 package goingmerry.cent.controller;
 
 //import goingmerry.cent.domain.DesignateFormation;
-import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import goingmerry.cent.domain.Formation;
-import goingmerry.cent.domain.Player;
 import goingmerry.cent.dto.FormationDto;
-import goingmerry.cent.dto.PlayerDto;
-import goingmerry.cent.repository.FormationRepository;
+import goingmerry.cent.dto.player.PlayerDto;
 import goingmerry.cent.repository.PlayerRepository;
-import goingmerry.cent.service.FormationDesignService;
 import goingmerry.cent.service.FormationService;
 import goingmerry.cent.service.PlayerService;
 import goingmerry.cent.service.TeamService;
@@ -22,12 +15,10 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @RestController
@@ -42,8 +33,6 @@ public class FormationController {
     private final FormationService formationService;
 
     private final PlayerService playerService;
-
-    private final PlayerRepository playerRepository;
 
     private final TeamService teamService;
 

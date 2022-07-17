@@ -1,18 +1,33 @@
 package goingmerry.cent.dto;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+
 
 @Getter
+@NoArgsConstructor
 public class UserSaveDto {
-    private String activityArea = "";
 
-    private String Position;
+    private String userName;
+
+    private String nickName;
+
+    private String email;   //ID
+
+    private String password;    //Password
+
+    private String activityArea;
+
+    private String position;
 
     private boolean isExpert;
 
-    public UserSaveDto(String activityArea, String position, boolean isExpert) {
-        this.activityArea = activityArea;
-        Position = position;
-        this.isExpert = isExpert;
+    private String gender;
+
+    private String birthDate;
+
+    public UserSaveDto(String email, String password) {
+        this.email = email;
+        this.password = password;
     }
 }
