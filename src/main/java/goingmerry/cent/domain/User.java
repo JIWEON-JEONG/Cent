@@ -74,7 +74,7 @@ public class User extends BaseTimeEntity implements UserDetails {
     private Team team;
 
 
-    @OneToOne(mappedBy = "user1")
+    @OneToOne(mappedBy = "leaderUser")
     private Team team1;
 
     public void setEmailAuth(boolean emailAuth) {

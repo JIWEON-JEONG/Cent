@@ -1,9 +1,7 @@
 package goingmerry.cent.repository;
 
 
-import goingmerry.cent.domain.Formation;
 import goingmerry.cent.domain.Player;
-import goingmerry.cent.dto.PlayerDto;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -11,14 +9,10 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Map;
 
 public interface PlayerRepository extends JpaRepository<Player, Long> {
 
-    //전체 선수 목록 get
-    List<Player> findPlayersByTeamName(String teamName);
-
-    int countPlayersByTeamName(String teamName);
+//    int countPlayersByTeamName(String teamName);
 
     @Transactional
     @Modifying(clearAutomatically = true)

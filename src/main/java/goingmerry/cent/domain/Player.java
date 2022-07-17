@@ -26,51 +26,68 @@ public class Player {
     private Long id;
 
     @Column(nullable = false)
-    private String userEmail;
-
-    @Column(nullable = false)
-    private String back; // 등번호는 어디서 받아? -> 물어보기
-
-    @Column(nullable = false)
-    private String name;
+    private String back;
 
     @Column(nullable = false)
     private boolean already;
 
-    private String want;
     //like, select 는 데이터베이스의 예약어이기때문에 sql 문이 오류가 난다.
     //-> want, current 로 변경
     private String current;
 
-    @Column(nullable = false)
-    private String teamName;
-
-    private boolean leader; // 주장여부
+    private boolean isCaptain; // 주장여부
 
     @Column(nullable = true)
     private Integer formationIndex; // 현재 원 번호? -> 선발 선수들
-    /*
-    포메이션(선수 정보) 저장 api 1
-    불러오는 api 1
-     */
-
-    // 팀 관리에서 명단 볼때는 맴버 긁어오나 선수 긁어오나?
 
 //    User : Player = 1:1
 
-    @Builder
-    public Player(Long id, String userEmail, String back, String name, boolean already, String want, String current, String teamName, boolean leader, Integer formationIndex) {
-        this.id = id;
-        this.userEmail = userEmail;
-        this.back = back;
-        this.name = name;
-        this.already = already;
-        this.want = want;
-        this.current = current;
-        this.teamName = teamName;
-        this.leader = leader;
-        this.formationIndex = formationIndex;
+//    @Column(nullable = false)
+//    private String name; // 유저아이디로 합쳐져 필요 x
+//    @Column(nullable = false)
+//    private String userEmail; // 유저아이디로 통합할 것
+//    private String want; // 유저테이블에서 가져올 것
+//    @Column(nullable = false)
+//    private String teamName; // 팀아이디로 통합할 것
+
+    @OneToOne
+    @JoinColumn(name = "userId")
+    private User user;
+
+    @ManyToOne(optional = true)
+    @JoinColumn(name = "teamId")
+    private Team team;
+
+
+    public Team getTeam() {
+        return team;
     }
+
+//    public void setTeam(Team team) {
+//        this.team = team;
+//    }
+
+    @Builder
+    public Player(Long id, String back, boolean already, String current, boolean isCaptain, Integer formationIndex, User user, Team team) {
+        this.id = id;
+        this.back = back;
+        this.already = already;
+        this.current = current;
+        this.isCaptain = isCaptain;
+        this.formationIndex = formationIndex;
+        this.user = user;
+        this.team = team;
+    }
+
+
+    public void update(String back) {
+        this.back = back;
+//        this.already = already;
+//        this.current = current;
+//        this.leader = leader;
+//        this.formationIndex = formationIndex;
+    }
+
 }
 
 
