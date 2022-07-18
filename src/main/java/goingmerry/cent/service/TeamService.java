@@ -1,18 +1,22 @@
 package goingmerry.cent.service;
 
+import goingmerry.cent.domain.Player;
 import goingmerry.cent.domain.Team;
 import goingmerry.cent.domain.User;
 import goingmerry.cent.dto.TeamDto;
+import goingmerry.cent.dto.TeamFormationDto;
 import goingmerry.cent.dto.TeamSaveDto;
+import goingmerry.cent.dto.player.PlayerDto;
+import goingmerry.cent.repository.PlayerRepository;
 import goingmerry.cent.repository.TeamRepository;
 import goingmerry.cent.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -23,7 +27,7 @@ public class TeamService {
 
     private final TeamRepository teamRepository;
 
-    private final FormationService formationService;
+    private final PlayerRepository playerRepository;
 
     private final UserRepository userRepository;
 
@@ -57,7 +61,7 @@ public class TeamService {
         TeamDto res = TeamDto.builder()
                 .entity(entity).build();
 
-//        formationService.createDefaultFormation(team.getTeamName()); // 기본 포메이션 생성 -> 현재 사용하지 않음.
+
         log.info("팀 저장. 저장된 팀 정보 : {}", res);
 
         return res;
@@ -109,6 +113,34 @@ public class TeamService {
         Optional<Team> entity = teamRepository.findById(teamId);
 
         teamRepository.delete(entity.get());
+    }
+
+    // 해당 어노테이션 없으면 update 로직 안 돌아감.
+    @Transactional
+    public TeamFormationDto updateFormation(TeamFormationDto req) {
+
+        Long teamId = req.getTeamId();
+        String formationName = req.getFormationName();
+
+        // team get
+        Optional<Team> optionalTeam = teamRepository.findById(teamId);
+        Team teamEntity = optionalTeam.get();
+
+        // team update formationName;
+        teamEntity.update(formationName);
+
+        // get players;
+        List<PlayerDto> players = req.getPlayerList();
+
+        // player update
+        for (PlayerDto player : players) {
+            Player entity = playerRepository.getById(player.getId());
+
+            entity.update(player);
+
+        }
+
+        return req;
     }
 
 }

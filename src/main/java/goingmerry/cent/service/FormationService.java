@@ -28,26 +28,26 @@ public class FormationService {
         return currentFormation;
     }
 
-    // 팀 생성 시 기본 포메이션 생성
-    public FormationDto createDefaultFormation(String teamName) {
-
-        log.info("팀 최초 생성, 기본 포메이션 생성!");
-
-        String defaultFormation = "4421";
-        Formation formation = Formation
-                .builder()
-                .formation(defaultFormation)
-                .teamName(teamName)
-                .build();
-
-        formationRepository.save(formation);
-
-        FormationDto formationDto = new FormationDto();
-        formationDto.setTeamName(formation.getTeamName());
-        formationDto.setFormation(formation.getFormation());
-
-        return formationDto;
-    }
+    // 팀 생성 시 기본 포메이션 생성 -> 팀 생성시 로직에 포함시켰으므로 삭제
+//    public FormationDto createDefaultFormation(String teamName) {
+//
+//        log.info("팀 최초 생성, 기본 포메이션 생성!");
+//
+//        String defaultFormation = "4421";
+//        Formation formation = Formation
+//                .builder()
+//                .formation(defaultFormation)
+//                .teamName(teamName)
+//                .build();
+//
+//        formationRepository.save(formation);
+//
+//        FormationDto formationDto = new FormationDto();
+//        formationDto.setTeamName(formation.getTeamName());
+//        formationDto.setFormation(formation.getFormation());
+//
+//        return formationDto;
+//    }
 
 
     // 포메이션 저장

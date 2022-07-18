@@ -1,7 +1,7 @@
 package goingmerry.cent.controller;
 
-import goingmerry.cent.dto.FormationDto;
 import goingmerry.cent.dto.TeamDto;
+import goingmerry.cent.dto.TeamFormationDto;
 import goingmerry.cent.dto.TeamSaveDto;
 import goingmerry.cent.repository.AreaRepository;
 import goingmerry.cent.repository.TeamRepository;
@@ -140,7 +140,6 @@ public class TeamController {
     //팀의 다른 정보는 제하고, 팀의 이름만 리스트업하는 일반 쿼리 사용한 api
     @RequestMapping(value = "/list/team", method = RequestMethod.GET)
     public List<String> listAllTeam() {
-//        return repository.findAllteamName();
 
         return teamRepository.findTeamName();
     }
@@ -150,6 +149,23 @@ public class TeamController {
 
 
 //  포메이션 관련
+
+    @PatchMapping(value = "/update/formation")
+    public ResponseEntity<TeamFormationDto> updateFormation(@RequestBody TeamFormationDto req) {
+
+        log.info("[API CALL : /api/formation/update/formation");
+
+        log.info(req.getFormationName());
+        log.info(req.getTeamId().toString());
+        for(int i=0;i<req.getPlayerList().size();i++) {
+            log.info("{}", req.getPlayerList().get(i));
+        }
+
+
+        TeamFormationDto res = teamService.updateFormation(req);
+
+        return new ResponseEntity<>(res, HttpStatus.OK);
+    }
 
 
 //    ################################ 지역 관련 ################################

@@ -35,7 +35,7 @@ public class User extends BaseTimeEntity implements UserDetails {
 
     private String password;    //Password
 
-    private String activityArea = "";
+    private String activityArea;
 
     private String position;
 
