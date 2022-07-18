@@ -4,6 +4,7 @@ import goingmerry.cent.dto.UserDto;
 import goingmerry.cent.dto.player.PlayerDto;
 import goingmerry.cent.dto.player.PlayerSaveDto;
 import goingmerry.cent.dto.player.formationPlayerDto;
+import goingmerry.cent.repository.PlayerRepository;
 import goingmerry.cent.service.ApplicationService;
 import goingmerry.cent.service.PlayerService;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +28,8 @@ public class PlayerController {
 
     private final PlayerService playerService;
 
+    private final PlayerRepository playerRepository;
+
     // 새로운 선수를 저장한다.
     // teamid, userid?
     @PostMapping(value = "/save")
@@ -34,24 +37,28 @@ public class PlayerController {
 
         log.info("[API CALL] : /api/player/save, save user Id is {}", playerInfo.getUserId());
 
+        if(!playerRepository.findByUserId(playerInfo.getUserId()).isEmpty()) {
+            log.error("is already join this team! ");
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
         PlayerDto res = playerService.save(playerInfo);
 
         return new ResponseEntity(res, HttpStatus.OK);
     }
 
-//    // 전체 선수 목록 get
-//    @GetMapping(value = "/getAll")
-//    public ResponseEntity<List<PlayerDto>> userInfo() {
-//
-//        log.info("[API CALL] : /api/player/getuser");
-//
-//        List<PlayerDto> playerList = playerService.findAllPlayers();
-//        HttpStatus status = HttpStatus.OK;
-//
-//        log.debug(playerList.toString());
-//
-//        return new ResponseEntity<>(playerList, status);
-//    }
+    // 전체 선수 목록 get
+    @GetMapping(value = "/getAll")
+    public ResponseEntity<List<PlayerDto>> findAllPlayers() {
+
+        log.info("[API CALL] : /api/player/getuser");
+
+        List<PlayerDto> res = playerService.findAllPlayers();
+
+        log.debug(res.toString());
+
+        return new ResponseEntity<>(res, HttpStatus.OK);
+    }
 //
 //    // 변경 필요
 //    // 플레이어 아이디로 선수 정보 get -> 선수 테이블이 아니라 유저 테이블에서 전체 정보 get -> 선수 신청했을 때 정보 보는 용도 -> 여기 있어야 할까 꼭

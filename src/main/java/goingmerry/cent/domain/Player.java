@@ -1,5 +1,6 @@
 package goingmerry.cent.domain;
 
+import goingmerry.cent.dto.player.PlayerDto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -68,8 +69,7 @@ public class Player {
 //    }
 
     @Builder
-    public Player(Long id, String back, boolean already, String current, boolean isCaptain, Integer formationIndex, User user, Team team) {
-        this.id = id;
+    public Player(String back, boolean already, String current, boolean isCaptain, Integer formationIndex, User user, Team team) {
         this.back = back;
         this.already = already;
         this.current = current;
@@ -82,10 +82,14 @@ public class Player {
 
     public void update(String back) {
         this.back = back;
-//        this.already = already;
-//        this.current = current;
-//        this.leader = leader;
-//        this.formationIndex = formationIndex;
+    }
+
+    public void update(PlayerDto req) {
+        this.back = req.getBack();
+        this.already = req.isAlready();
+        this.current = req.getCurrent();
+        this.isCaptain = req.isCaptain();
+        this.formationIndex = req.getFormationIndex();
     }
 
 }

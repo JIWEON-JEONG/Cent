@@ -48,12 +48,12 @@ public class PlayerService {
     public PlayerDto save(PlayerSaveDto playerInfo) {
         log.info("[service player_save call, save player name is {}]");
 
+        Optional<User> user = userRepository.findById(playerInfo.getUserId());
+        Optional<Team> team = teamRepository.findById(playerInfo.getTeamId());
+
         playerInfo.setAlready(false);
         playerInfo.setBack("0");
         playerInfo.setCaptain(false);
-
-        Optional<User> user = userRepository.findById(playerInfo.getUserId());
-        Optional<Team> team = teamRepository.findById(playerInfo.getTeamId());
 
         Player entity = playerRepository.save(Player.builder()
                 .user(user.get())
@@ -65,10 +65,21 @@ public class PlayerService {
                 .isCaptain(playerInfo.isCaptain())
                 .build());
 
-        PlayerDto res = PlayerDto
+        return PlayerDto
                 .builder()
                 .entity(entity)
                 .build();
+    }
+
+    public List<PlayerDto> findAllPlayers() {
+
+        List<PlayerDto> res = new ArrayList<>();
+
+        List<Player> entity = playerRepository.findAll();
+
+        for (Player player : entity) {
+            res.add(PlayerDto.builder().entity(player).build());
+        }
 
         return res;
     }
@@ -161,11 +172,9 @@ public class PlayerService {
 
     // update 하나로 합치기 위해서 아래 트랜젝션 연산으로 변경중
     @Transactional // 디비 영속성 이용해서 트랜젝션 연산, 리포지토리에 update 로직 넣지 않고 엔티티 클래스에서 업데이트 가능함.
-//    public Long update(Long id, PlayerUpdateDto requestDto) {
     public Long update(Long id, String newNum) {
-        Player player = playerRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("해당 게시글이 없습니다. id = " +id));
+        Player player = playerRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("해당하는 선수가 없습니다."));
 
-//        player.update(requestDto.getBack());
         player.update(newNum);
 
         return id;
