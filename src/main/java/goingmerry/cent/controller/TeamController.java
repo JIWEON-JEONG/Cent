@@ -31,6 +31,8 @@ public class TeamController {
     @RequestMapping(value = "/exist", method = RequestMethod.GET)
     public Map<String, String> existTeamName(@RequestBody Map<String, String> teamInfo) {
 
+        log.info("[API CALL] : /api/team/exist");
+
         Map<String, String> res = new HashMap<>();
 
         String teamName = teamInfo.get("teamName");
@@ -52,6 +54,8 @@ public class TeamController {
     //update api는 따로 생성 다시 할 것
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     public ResponseEntity createTeam(@RequestBody Map<String, String> teamInfo) {
+
+        log.info("[API CALL] : /api/team/create");
 
         Map<String, String> returnMap = new HashMap<>();
         log.info("{}", teamInfo);
@@ -116,6 +120,8 @@ public class TeamController {
     @PatchMapping(value = "/update")
     public ResponseEntity updateTeam(@RequestBody TeamDto req) {
 
+        log.info("[API CALL] : /api/team/update");
+
         TeamDto res = teamService.update(req);
 
         return new ResponseEntity<>(res,HttpStatus.OK);
@@ -127,7 +133,9 @@ public class TeamController {
     @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
     public ResponseEntity deleteTeam(@RequestParam Long teamId) {
 
-            var res = new HashMap<String, String>();
+        log.info("[API CALL] : /api/team/delete");
+
+        var res = new HashMap<String, String>();
 
         try {
             teamService.deleteTeam(teamId);
@@ -141,8 +149,10 @@ public class TeamController {
     }
 
     //팀의 다른 정보는 제하고, 팀의 이름만 리스트업
-    @RequestMapping(value = "/list/team", method = RequestMethod.GET)
+    @RequestMapping(value = "/list/allTeamName", method = RequestMethod.GET)
     public List<String> listAllTeam() {
+
+        log.info("[API CALL] : /api/team/list/allTeamName");
 
         return teamRepository.findTeamName();
     }
@@ -156,6 +166,8 @@ public class TeamController {
     @GetMapping(value = "/formation/get")
     public ResponseEntity getFormation(@RequestParam Long teamId) {
 
+        log.info("[API CALL] : /api/team/formation/get");
+
         TeamFormationDto res = teamService.getFormation(teamId);
 
         return new ResponseEntity<>(res, HttpStatus.OK);
@@ -164,7 +176,7 @@ public class TeamController {
     @PatchMapping(value = "/formation/update")
     public ResponseEntity<TeamFormationDto> updateFormation(@RequestBody TeamFormationDto req) {
 
-        log.info("[API CALL : /api/formation/update/formation");
+        log.info("[API CALL : /api/formation/formation/update");
 
         log.info(req.getFormationName());
         log.info(req.getTeamId().toString());
