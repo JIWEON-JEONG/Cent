@@ -103,6 +103,28 @@ public class TeamService {
     }
 
     @Transactional
+    public TeamDto update(TeamDto req) {
+
+        Long teamId = req.getId();
+        String intro = req.getIntro();
+        String logo = req.getLogo();
+
+        Optional<Team> entity = teamRepository.findById(teamId);
+        if(entity.isEmpty()) {
+            Team team = entity.get();
+
+            team.update(intro, logo);
+        } else {
+            throw new RuntimeException("해당 팀 존재 x");
+        }
+
+        return TeamDto
+                .builder()
+                .entity(entity.get())
+                .build();
+    }
+
+    @Transactional
     public void deleteTeam(Long teamId) {
 
         //팀 삭제 시 존재하는 팀을 삭제하는가는 일단 고려하지 않았다. 팀장 한명당 팀 정보는 하나밖에 없을 테니까.
@@ -139,6 +161,7 @@ public class TeamService {
     }
 
     // 해당 어노테이션 없으면 update 로직 안 돌아감.
+    // 팀 포메이션명, 선수 already, current, formationIndex update
     @Transactional
     public TeamFormationDto updateFormation(TeamFormationDto req) {
 

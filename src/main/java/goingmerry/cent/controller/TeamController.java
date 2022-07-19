@@ -111,10 +111,14 @@ public class TeamController {
 
     }
 
-    // 팀 정보 업데이트
-    @RequestMapping(value = "/update", method = RequestMethod.POST)
-    public Map<String, String> updateTeam(@RequestBody Map<String, String> teamInfo) {
-        return null;//구현 필요
+    // 팀 정보 업데이트(소개글, 이미지)
+    // 이미지 formData 처리는?
+    @PatchMapping(value = "/update")
+    public ResponseEntity updateTeam(@RequestBody TeamDto req) {
+
+        TeamDto res = teamService.update(req);
+
+        return new ResponseEntity<>(res,HttpStatus.OK);
     }
 
     //삭제할 팀명이 있는 팀명인지 먼저 알아보는 것 필요

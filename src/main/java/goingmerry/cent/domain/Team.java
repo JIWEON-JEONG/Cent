@@ -49,10 +49,9 @@ public class Team extends BaseTimeEntity{
         this.leaderUser = leaderUser;
     }
 
-    public void update(String intro, String logo, String formationName) {
+    public void update(String intro, String logo) {
         this.intro = intro;
         this.logo = logo;
-        this.formationName = formationName;
     }
 
     public void update(String formationName) {
