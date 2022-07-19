@@ -1,5 +1,6 @@
 package goingmerry.cent.controller;
 
+import goingmerry.cent.dto.PlayerInfoDto;
 import goingmerry.cent.dto.UserDto;
 import goingmerry.cent.dto.player.PlayerDto;
 import goingmerry.cent.dto.player.PlayerSaveDto;
@@ -59,27 +60,15 @@ public class PlayerController {
 
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
-//
-//    // 변경 필요
-//    // 플레이어 아이디로 선수 정보 get -> 선수 테이블이 아니라 유저 테이블에서 전체 정보 get -> 선수 신청했을 때 정보 보는 용도 -> 여기 있어야 할까 꼭
-//    @GetMapping(value = "/finduser")
-//    public ResponseEntity findUserById(@RequestParam Long id) {
-//
-//        log.info("[API CALL] : /api/player/finduser?id={}",id);
-//
-//        HttpStatus status = HttpStatus.OK;
-//
-//        if (id == null) {
-//            log.error("id is not null value!");
-//            Map<String, String> response = new HashMap<>();
-//            response.put("ERRMSG", "id is not null value!");
-//            return new ResponseEntity<>(response, status);
-//        }
-//
-//        UserDto res = playerService.findUserInfo(id);
-//
-//        return new ResponseEntity<>(res, status);
-//    }
+
+    // player 단일 선수 조회
+    @GetMapping(value = "/find")
+    public ResponseEntity findUserById(@RequestParam Long playerId) {
+
+        PlayerInfoDto res = playerService.find(playerId);
+
+        return new ResponseEntity<>(res, HttpStatus.OK);
+    }
 //
 //    // 특정 팀의 선수 관리 목록을 불러오기 위함. 선수정보에 유저정보까지 빼서 갖다 넣어야 하기 때문에 유저 테이블과의 연결이 필요하다.
 //    @GetMapping(value = "/findplayers/{teamName}")

@@ -3,6 +3,7 @@ package goingmerry.cent.service;
 import goingmerry.cent.domain.Player;
 import goingmerry.cent.domain.Team;
 import goingmerry.cent.domain.User;
+import goingmerry.cent.dto.PlayerInfoDto;
 import goingmerry.cent.dto.UserDto;
 import goingmerry.cent.dto.player.PlayerDto;
 import goingmerry.cent.dto.player.PlayerSaveDto;
@@ -30,19 +31,6 @@ public class PlayerService {
 
     private final TeamRepository teamRepository;
 
-    // 전체 선수 목록 조회
-//    public List<PlayerDto> findAllPlayers() {
-//        log.info("[service find_All_User call ");
-//
-//        List<Player> entity = playerRepository.findAll();
-//        List<PlayerDto> response = new ArrayList<>();
-//
-//        for (Player player : entity) {
-//            response.add(new PlayerDto(player));
-//        }
-//
-//        return response;
-//    }
 
     // 선수 저장
     public PlayerDto save(PlayerSaveDto playerInfo) {
@@ -71,6 +59,7 @@ public class PlayerService {
                 .build();
     }
 
+    // 전체 선수 목록 조회
     public List<PlayerDto> findAllPlayers() {
 
         List<PlayerDto> res = new ArrayList<>();
@@ -84,6 +73,41 @@ public class PlayerService {
         log.debug("{}",res);
 
         return res;
+    }
+
+    // 선수 단일 조회
+    public PlayerInfoDto find(Long playerId) {
+
+        Optional<Player> optionalPlayer = playerRepository.findById(playerId);
+
+        if(!optionalPlayer.isEmpty()) {
+            Player entity = optionalPlayer.get(); // 선수 엔티티로 나머지 도메인 전체 조회
+
+            return PlayerInfoDto
+                    .builder()
+                    .playerId(playerId)
+                    .userId(entity.getUser().getId())
+                    .teamId(entity.getTeam().getId())
+                    .userName(entity.getUser().getUsername())
+                    .email(entity.getUser().getEmail())
+                    .wantPosition(entity.getUser().getPosition())
+                    .currentPosition(entity.getCurrent())
+                    .already(entity.isAlready())
+                    .isCaptain(entity.isCaptain())
+                    .build();
+        } else {
+            throw new RuntimeException("존재하지 않는 선수입니다.");
+        }
+    }
+
+    // 등번호 업데이트
+    @Transactional // 디비 영속성 이용해서 트랜젝션 연산, 리포지토리에 update 로직 넣지 않고 엔티티 클래스에서 업데이트 가능함.
+    public Long update(Long id, String newNum) {
+        Player player = playerRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("해당하는 선수가 없습니다."));
+
+        player.update(newNum);
+
+        return id;
     }
 
 //    // 선수 업데이트
@@ -108,17 +132,6 @@ public class PlayerService {
 //        return playerRepository.countPlayersByTeamName(teamId);
 //    }
 
-    // 유저 정보 get. merge 뒤에 유저서비스로 옮기는게 좋을 것 같다.
-//    public UserDto findUserInfo(Long id) {
-//
-////        Map<String, String> userInfo = userRepository.findUserInfoByEmail(email);
-//
-//        Optional<User> entity = userRepository.findById(id);
-//
-//        return UserDto.builder()
-//                .entity(entity.get())
-//                .build();
-//    }
 
     // 팀 정보 페이지 용, wireflow에서 보여지는 선수 정보. 등번호, 포지션, 선수명 -> 맵 반환
 //    public List<formationPlayerDto> formationPlayerInfo(String teamName) { // teamName -> 테이블 연결 후 팀Id로 변경 필요
@@ -155,32 +168,7 @@ public class PlayerService {
 //        return players;
 //    }
 //
-//    public PlayerDto patchBackNum(Long playerId, String newNum) {
-//
-//        Optional<Player> player = playerRepository.findById(playerId);
-////
-////        playerRepository.save(Player.builder()
-////                .id(player.get().getId())
-////                .back(newNum)
-////                .build());
-//
-//        playerRepository.updateBack(playerId, newNum);
-//
-//        return PlayerDto
-//                .builder()
-//                .entity(playerRepository.getById(playerId))
-//                .build();
-//    }
 
-    // update 하나로 합치기 위해서 아래 트랜젝션 연산으로 변경중
-    @Transactional // 디비 영속성 이용해서 트랜젝션 연산, 리포지토리에 update 로직 넣지 않고 엔티티 클래스에서 업데이트 가능함.
-    public Long update(Long id, String newNum) {
-        Player player = playerRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("해당하는 선수가 없습니다."));
-
-        player.update(newNum);
-
-        return id;
-    }
 
 //    public PlayerDto delete(Long playerId) {
 //
