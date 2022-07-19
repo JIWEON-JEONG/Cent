@@ -81,6 +81,8 @@ public class PlayerService {
             res.add(PlayerDto.builder().entity(player).build());
         }
 
+        log.debug("{}",res);
+
         return res;
     }
 

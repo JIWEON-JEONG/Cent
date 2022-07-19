@@ -15,10 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -115,6 +112,32 @@ public class TeamService {
         teamRepository.delete(entity.get());
     }
 
+    public TeamFormationDto getFormation(Long teamId) {
+
+        TeamFormationDto res = new TeamFormationDto();
+
+        Team teamEntity = teamRepository.getById(teamId);
+
+        String formationName = teamEntity.getFormationName();
+
+        res.setTeamId(teamId);
+        res.setFormationName(formationName);
+
+        List<Player> playerEntities = playerRepository.findByTeamId(teamId);
+
+        List<PlayerDto> playerRes = new ArrayList<>();
+
+        if(!playerEntities.isEmpty()) {
+            for (Player playerEntity : playerEntities) {
+                playerRes.add(new PlayerDto(playerEntity));
+            }
+        }
+
+        res.setPlayerList(playerRes);
+
+        return res;
+    }
+
     // 해당 어노테이션 없으면 update 로직 안 돌아감.
     @Transactional
     public TeamFormationDto updateFormation(TeamFormationDto req) {
@@ -142,5 +165,7 @@ public class TeamService {
 
         return req;
     }
+
+
 
 }

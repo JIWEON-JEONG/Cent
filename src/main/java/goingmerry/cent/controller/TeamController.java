@@ -5,7 +5,6 @@ import goingmerry.cent.dto.TeamFormationDto;
 import goingmerry.cent.dto.TeamSaveDto;
 import goingmerry.cent.repository.AreaRepository;
 import goingmerry.cent.repository.TeamRepository;
-import goingmerry.cent.service.FormationService;
 import goingmerry.cent.service.TeamService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,26 +28,25 @@ public class TeamController {
 
     private final AreaRepository areaRepository;
 
-    private final FormationService formationService;
-
     @RequestMapping(value = "/exist", method = RequestMethod.GET)
     public Map<String, String> existTeamName(@RequestBody Map<String, String> teamInfo) {
 
-        Map<String, String> returnMap = new HashMap<>();
+        Map<String, String> res = new HashMap<>();
 
         String teamName = teamInfo.get("teamName");
 
         //errMsg같은 경우는 0,1의 코드 형태로 들어갈 수 있게 할 것.
         //DB에서 팀명으로 검색, 있는 팀명이라면 등록이 안 되게 하였다.
         if (teamService.isExistTeam(teamName)){
-            returnMap.put("ErrorMsg", "이미 존재하는 팀입니다. 다른 팀명을 사용하세요.");
-            returnMap.put("현재 팀명", teamName);
-            log.info("Response : {}",returnMap);
+            res.put("ErrorMsg", "이미 존재하는 팀입니다. 다른 팀명을 사용하세요.");
+            res.put("현재 팀명", teamName);
+            res.put("code", "100");
+            log.info("Response : {}",res);
         }
         else {
-            returnMap.put("ApprovalMsg", "사용 가능한 팀명입니다.");
+            res.put("ApprovalMsg", "사용 가능한 팀명입니다.");
         }
-        return returnMap;
+        return res;
     }
 
     //update api는 따로 생성 다시 할 것
@@ -65,6 +63,7 @@ public class TeamController {
         boolean isAreaNull = teamService.isRequireValueNull(teamInfo).get("area");
         log.error("isAreaNull? : {}", isAreaNull);
         if (isTeamNameNull || isAreaNull){
+            // Exception 처리 해줘야
             if (isTeamNameNull) {
                 returnMap.put("TeamName Is Null!!", "팀명은 필수 값 입니다.");
 
@@ -137,7 +136,7 @@ public class TeamController {
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
 
-    //팀의 다른 정보는 제하고, 팀의 이름만 리스트업하는 일반 쿼리 사용한 api
+    //팀의 다른 정보는 제하고, 팀의 이름만 리스트업
     @RequestMapping(value = "/list/team", method = RequestMethod.GET)
     public List<String> listAllTeam() {
 
@@ -150,7 +149,15 @@ public class TeamController {
 
 //  포메이션 관련
 
-    @PatchMapping(value = "/update/formation")
+    @GetMapping(value = "/formation/get")
+    public ResponseEntity getFormation(@RequestParam Long teamId) {
+
+        TeamFormationDto res = teamService.getFormation(teamId);
+
+        return new ResponseEntity<>(res, HttpStatus.OK);
+    }
+
+    @PatchMapping(value = "/formation/update")
     public ResponseEntity<TeamFormationDto> updateFormation(@RequestBody TeamFormationDto req) {
 
         log.info("[API CALL : /api/formation/update/formation");
