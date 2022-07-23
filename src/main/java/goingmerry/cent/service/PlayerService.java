@@ -85,19 +85,32 @@ public class PlayerService {
 
             return PlayerInfoDto
                     .builder()
-                    .playerId(playerId)
-                    .userId(entity.getUser().getId())
-                    .teamId(entity.getTeam().getId())
-                    .userName(entity.getUser().getUsername())
-                    .email(entity.getUser().getEmail())
-                    .wantPosition(entity.getUser().getPosition())
-                    .currentPosition(entity.getCurrent())
-                    .already(entity.isAlready())
-                    .isCaptain(entity.isCaptain())
+                    .player(entity)
                     .build();
         } else {
-            throw new RuntimeException("존재하지 않는 선수입니다.");
+//            throw new RuntimeException("존재하지 않는 선수입니다.");
+            return null;
         }
+    }
+
+    public List<PlayerInfoDto> findAllByTeamId(Long teamId) {
+
+        List<Player> entities = playerRepository.findByTeamId(teamId);
+        List<PlayerInfoDto> res = new ArrayList<>();
+
+        if(entities.isEmpty()) {
+            return null;
+        }
+
+        for (Player entity : entities) {
+            res.add(
+                    PlayerInfoDto
+                            .builder()
+                            .player(entity)
+                            .build());
+        }
+
+        return res;
     }
 
     // 등번호 업데이트
@@ -110,82 +123,34 @@ public class PlayerService {
         return id;
     }
 
-//    // 선수 업데이트
-//    public void updatePlayers(List<PlayerDto> players) {
-//        log.info("[service player_update call]");
-//
-//        List<Player> playersEntity = new ArrayList<>();
-//
-//        for (PlayerDto player : players) {
-//            playersEntity.add(toEntity(player));
-//        }
-//
-//        playerRepository.saveAll(playersEntity);
-//    }
+    public int delete(Long playerId) {
 
+        Optional<Player> player = playerRepository.findById(playerId);
 
-    // 팀 소속 선수 명 수
-//    public int countPlayer(Long teamId) {
-//
-//        Optional<Team> teamEntity =
-//
-//        return playerRepository.countPlayersByTeamName(teamId);
-//    }
+        if(player.isEmpty()) {
+            return -102;
+        } else {
+            playerRepository.deleteById(player.get().getId());
+            return 100;
+        }
 
-
-    // 팀 정보 페이지 용, wireflow에서 보여지는 선수 정보. 등번호, 포지션, 선수명 -> 맵 반환
-//    public List<formationPlayerDto> formationPlayerInfo(String teamName) { // teamName -> 테이블 연결 후 팀Id로 변경 필요
-//
-//        log.info("teamName = {}",teamName);
-//
-//        List<Player> entityList = playerRepository.findPlayersByTeamName(teamName);
-//        List<formationPlayerDto> resList = new ArrayList<>();
-//
-//        for (Player player : entityList) {
-//            resList.add(formationPlayerDto
-//                    .builder()
-//                    .entity(player)
-//                    .build());
-//        }
-//
-//        return resList;
-//    }
-
-    // 선수 관리 페이지 용, 팀 전체 선수 정보 get
-//    public List<PlayerDto> getAllPlayerByTeamName(String teamName) {
-//
-//        List<PlayerDto> players = new ArrayList<>();
-//
-//        List<Player> entity = playerRepository.findPlayersByTeamName(teamName);
-//
-//        for (Player player : entity) {
-//            players.add(PlayerDto
-//                    .builder()
-//                    .entity(player)
-//                    .build());
-//        }
-//
-//        return players;
-//    }
-//
-
-
-//    public PlayerDto delete(Long playerId) {
-//
-//        Optional<Player> player = playerRepository.findById(playerId);
-//
-//        playerRepository.deleteById(player.get().getId());
-//
-//        return PlayerDto
-//                .builder()
-//                .entity(player.get())
-//                .build();
-//    }
-
-    Player toEntity(PlayerSaveDto req) {
-
-        return Player.builder()
-                .build();
     }
+
+    public List<PlayerDto> getPlayersByTeamId(Long teamId) {
+
+        List<Player> playerEntities = playerRepository.findByTeamId(teamId);
+
+        List<PlayerDto> res = new ArrayList<>();
+
+        if(!playerEntities.isEmpty()) {
+            for (Player playerEntity : playerEntities) {
+                res.add(new PlayerDto(playerEntity));
+            }
+        }
+
+        return res;
+    }
+
+
 
 }
