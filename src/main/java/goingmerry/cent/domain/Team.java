@@ -18,6 +18,7 @@ public class Team extends BaseTimeEntity{
     @Column(nullable = false)
     private String teamName;
 
+    @Column(nullable = true, length = 64)
     private String logo;
 
     private String intro;

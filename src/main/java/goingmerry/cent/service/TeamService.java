@@ -28,6 +28,8 @@ public class TeamService {
 
     private final UserRepository userRepository;
 
+    private final PlayerService playerService;
+
     //팀명 조회해서 있는지 없는지 판단해주는 메소드
     public boolean isExistTeam(String teamName){
         if(teamRepository.findByTeamName(teamName).isEmpty()){
@@ -102,6 +104,23 @@ public class TeamService {
         return resultMap;
     }
 
+    public TeamDto teamInfo(Long teamId) {
+
+        Optional<Team> entity = teamRepository.findById(teamId);
+
+        if(!entity.isEmpty()) {
+
+            return TeamDto
+                    .builder()
+                    .entity(entity.get())
+                    .build();
+
+        } else {
+            return null;
+        }
+
+    }
+
     @Transactional
     public TeamDto update(TeamDto req) {
 
@@ -145,15 +164,7 @@ public class TeamService {
         res.setTeamId(teamId);
         res.setFormationName(formationName);
 
-        List<Player> playerEntities = playerRepository.findByTeamId(teamId);
-
-        List<PlayerDto> playerRes = new ArrayList<>();
-
-        if(!playerEntities.isEmpty()) {
-            for (Player playerEntity : playerEntities) {
-                playerRes.add(new PlayerDto(playerEntity));
-            }
-        }
+        List<PlayerDto> playerRes = playerService.getPlayersByTeamId(teamId);
 
         res.setPlayerList(playerRes);
 

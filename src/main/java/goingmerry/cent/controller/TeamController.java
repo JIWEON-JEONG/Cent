@@ -149,12 +149,33 @@ public class TeamController {
     }
 
     //팀의 다른 정보는 제하고, 팀의 이름만 리스트업
-    @RequestMapping(value = "/list/allTeamName", method = RequestMethod.GET)
+    @GetMapping(value = "/list/allTeamName")
     public List<String> listAllTeam() {
 
         log.info("[API CALL] : /api/team/list/allTeamName");
 
         return teamRepository.findTeamName();
+    }
+
+    @GetMapping(value = "/get/{teamId}")
+    public ResponseEntity teamInfo(@PathVariable Long teamId) {
+
+        log.info("[API CALL] : /api/team/get/{}",teamId);
+
+        TeamDto res = teamService.teamInfo(teamId);
+
+        if(res == null) {
+            var errorRes = new HashMap<String, Object>();
+
+            errorRes.put("code", 101);
+            errorRes.put("msg", "존재하지 않는 팀입니다.");
+            return new ResponseEntity<>(errorRes,HttpStatus.BAD_REQUEST);
+        } else {
+
+            return new ResponseEntity<>(res,HttpStatus.OK);
+        }
+
+
     }
 
 
