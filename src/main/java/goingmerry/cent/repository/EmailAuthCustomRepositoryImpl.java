@@ -13,15 +13,15 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Slf4j
-@RequiredArgsConstructor
-@Repository
+//@RequiredArgsConstructor
+//@Repository
 public class EmailAuthCustomRepositoryImpl implements EmailAuthCustomRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
 
-//    public EmailAuthCustomRepositoryImpl(EntityManager em) {
-//        this.jpaQueryFactory = new JPAQueryFactory(em);
-//    }
+    public EmailAuthCustomRepositoryImpl(EntityManager em) {
+        this.jpaQueryFactory = new JPAQueryFactory(em);
+    }
 
     @Override
     public Optional<EmailAuth> findValidAuthByEmail(String email, String authToken, LocalDateTime currentTime) {
