@@ -2,7 +2,9 @@ package goingmerry.cent.repository;
 
 
 import goingmerry.cent.domain.Team;
+import lombok.extern.java.Log;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -21,17 +23,9 @@ public interface TeamRepository extends JpaRepository<Team, Long> {
 
         void deleteByTeamName(String teamName);
 
-//        @Query("UPDATE Team p SET p.TeamName = :TeamName WHERE p.TeamName = :TeamName")
-//        Optional<Team> updateTeamName(String TeamName);
-//
-//        @Query("UPDATE Team p SET p.Logo = :Logo WHERE p.TeamName = :TeamName")
-//        Optional<Team> updateLogo(String TeamName, String Logo);
-//
-//        @Query("UPDATE Team p SET p.Intro = :Intro WHERE p.TeamName = :TeamName")
-//        Optional<Team> updateIntro(String TeamName, String Intro);
+        @Modifying
+        @Query("UPDATE FROM Team p SET p.logo = :logo WHERE p.id = :teamId")
+        void updateLogo(@Param("teamId")Long teamId, @Param("logo")String logo);
 
-//        //팀이 활동지역을 바꿀까?
-//        @Query("UPDATE Team p SET p.Area = :Area WHERE p.TeamName = :TeamName")
-//        Optional<Team> updateArea(String TeamName, String Area);
 
 }

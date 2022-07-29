@@ -81,11 +81,6 @@ public class User extends BaseTimeEntity implements UserDetails {
         this.emailAuth = emailAuth;
     }
 
-//    @OneToOne
-//    @JoinColumn(name = "team_id")
-//    private Team team
-
-
 
     @Builder
     public User(String email, String password, List<String> roles) {
@@ -135,5 +130,10 @@ public class User extends BaseTimeEntity implements UserDetails {
         this.activityArea = userSaveDto.getActivityArea();
         this.position = userSaveDto.getPosition();
         this.isExpert = userSaveDto.isExpert();
+    }
+
+    public void update(Team entity) {
+        this.team = entity;
+
     }
 }

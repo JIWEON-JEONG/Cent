@@ -3,15 +3,25 @@ package goingmerry.cent.controller;
 import goingmerry.cent.dto.TeamDto;
 import goingmerry.cent.dto.TeamFormationDto;
 import goingmerry.cent.dto.TeamSaveDto;
+import goingmerry.cent.dto.teamLogoDto;
 import goingmerry.cent.repository.AreaRepository;
 import goingmerry.cent.repository.TeamRepository;
 import goingmerry.cent.service.TeamService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -89,6 +99,12 @@ public class TeamController {
             String area = teamInfo.get("area");
             Long leaderId = Long.valueOf(teamInfo.get("leaderId"));
 
+            // 22.7.25 추가, 팀장은 팀을 하나밖에 만들지 못 한다.
+            if(teamService.isLeaderExist(leaderId)) {
+                returnMap.put("ErrorMsg", "leader exist, Dont save!");
+                return new ResponseEntity<>(returnMap, HttpStatus.BAD_REQUEST);
+            }
+
             //DB에서 팀명으로 검색, 있는 팀명이라면 등록이 안 되게 하였다.
             if (!teamService.isExistTeam(teamName)){
 
@@ -127,9 +143,6 @@ public class TeamController {
         return new ResponseEntity<>(res,HttpStatus.OK);
     }
 
-    //삭제할 팀명이 있는 팀명인지 먼저 알아보는 것 필요
-    //근데 팀장한테는 어짜피 팀 하나일 건데 굳이 있는 팀명인지 알아보는 게 필요할까라는 생각은 든다.
-    //해당 메소드 서비스로 옮길 것.
     @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
     public ResponseEntity deleteTeam(@RequestParam Long teamId) {
 
@@ -178,10 +191,6 @@ public class TeamController {
 
     }
 
-
-// 선수 관련
-
-
 //  포메이션 관련
 
     @GetMapping(value = "/formation/get")
@@ -210,6 +219,57 @@ public class TeamController {
 
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
+
+
+    // 로고 이미지 관련
+
+    @PostMapping(value = "/logo/update")
+    public ResponseEntity updateLogo(@RequestParam("logo") MultipartFile logo, @RequestParam Long teamId) throws IOException {
+
+        String fileName = StringUtils.cleanPath(logo.getOriginalFilename());
+
+        // 확장자 추출 및 검사
+        String extension = teamService.getExtension(fileName);
+
+        if(extension.equals("error")) {
+
+            Map<String, Object> res = new HashMap<>();
+//            res.put("code", 401);
+            res.put("msg", "지원하지 않는 확장자입니다.");
+
+            return new ResponseEntity(res, HttpStatus.BAD_REQUEST);
+        }
+
+          TeamDto resDto = teamService.updateLogo(logo, teamId, extension);
+
+        return new ResponseEntity<>(resDto, HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/logo/get")
+    public ResponseEntity getLogo(@RequestParam Long teamId) {
+
+        teamLogoDto logoDto = teamService.getLogo(teamId);
+        Resource resource = logoDto.getResource();
+
+//        if(!resource.exists()) {
+        if(resource == null) {
+            return new ResponseEntity<Resource>(HttpStatus.BAD_REQUEST);
+        }
+
+        HttpHeaders header = new HttpHeaders();
+
+        Path filePath = null;
+        try{
+            filePath = Paths.get(logoDto.getFilePath());
+            header.add("Content-type", Files.probeContentType(filePath));
+        }catch(IOException e) {
+            e.printStackTrace();
+        }
+
+        return new ResponseEntity(resource, header, HttpStatus.OK);
+
+    }
+
 
 
 //    ################################ 지역 관련 ################################

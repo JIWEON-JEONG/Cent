@@ -7,15 +7,28 @@ import goingmerry.cent.dto.TeamDto;
 import goingmerry.cent.dto.TeamFormationDto;
 import goingmerry.cent.dto.TeamSaveDto;
 import goingmerry.cent.dto.player.PlayerDto;
+import goingmerry.cent.dto.teamLogoDto;
+import goingmerry.cent.filetest.FileUploadUtil;
 import goingmerry.cent.repository.PlayerRepository;
 import goingmerry.cent.repository.TeamRepository;
 import goingmerry.cent.repository.UserRepository;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 
 @Slf4j
 @Service
@@ -30,6 +43,16 @@ public class TeamService {
 
     private final PlayerService playerService;
 
+    public boolean isLeaderExist(Long userId) {
+
+        Optional<User> entity = userRepository.findById(userId);
+
+        if(entity.isEmpty()) return true;
+        else {
+            return entity.get().getTeam() != null;
+        }
+    }
+
     //팀명 조회해서 있는지 없는지 판단해주는 메소드
     public boolean isExistTeam(String teamName){
         if(teamRepository.findByTeamName(teamName).isEmpty()){
@@ -43,13 +66,8 @@ public class TeamService {
     }
 
     //존재하지 않던 팀의 새로운 생성. 팀 정보 받아서 디비에 저장해주는 역할을 한다.
+    @Transactional
     public TeamDto create(TeamSaveDto req) {
-
-        // 7.17 기존로직 삭제
-//              팀의 업데이트 또한 여기서 판단한다. 업데이트 하는 경우는 일단 필수값 이외 필드로 한정한다.
-//                teamRepository.findByTeamName(req.getTeamName())
-//                .map(entity -> entity.update(req.getIntro(), req.getLogo()))
-//                        .orElse(toEntity(req));
 
         req.setFormationName("4421"); // default formationName = 4421;
 
@@ -60,8 +78,8 @@ public class TeamService {
         TeamDto res = TeamDto.builder()
                 .entity(entity).build();
 
-
-        log.info("팀 저장. 저장된 팀 정보 : {}", res);
+        User leaderUser = userRepository.getById(res.getLeaderId());
+        leaderUser.update(entity);
 
         return res;
     }
@@ -149,8 +167,30 @@ public class TeamService {
         //팀 삭제 시 존재하는 팀을 삭제하는가는 일단 고려하지 않았다. 팀장 한명당 팀 정보는 하나밖에 없을 테니까.
 
         Optional<Team> entity = teamRepository.findById(teamId);
+        User leader = entity.get().getUser();
+        leader.update(null); // 팀장 유저의 연결관계 삭제
 
         teamRepository.delete(entity.get());
+
+        // 팀 삭제 시 해당 팀의 로고도 함께 삭제해야 함.
+        String uploadDir = "resources/static/logo/";
+        String logoName = entity.get().getLogo();
+
+        File file = new File(uploadDir + logoName);
+
+        if(file.exists()) {
+
+            if(!file.delete()) {
+
+                //exception;
+                log.error("file delete fail!");
+
+            }
+
+        } else {
+            log.info("로고가 존재하지 않습니다.");
+        }
+
     }
 
     public TeamFormationDto getFormation(Long teamId) {
@@ -200,6 +240,74 @@ public class TeamService {
         return req;
     }
 
+    // 로고 이미지 관련
+
+    @Transactional
+    public TeamDto updateLogo(MultipartFile logo, Long teamId, String extension) throws IOException {
+
+
+        Optional<Team> OpEntity = teamRepository.findById(teamId);
+
+        String teamName = OpEntity.get().getTeamName();
+
+        // 데이터베이스의 아이디를 받아와서 확장자와 연결, 저장 파일명을 만든다.
+        String fileName = teamName + "." + extension;
+
+        teamRepository.updateLogo(teamId, fileName);
+
+
+//        String uploadDir = "src/main/resources/static/logo/";
+        String uploadDir = "resources/static/logo/"; // 경로 관련해서 지워질 텐데 어떻게 할 지 경로 지정 성록이형
+        // 파일은 같은 이름일 때 알아서 덮어 씌운다.
+        FileUploadUtil.saveNewImage(uploadDir, fileName, logo);
+
+        return TeamDto
+                .builder()
+                .entity(teamRepository.getById(teamId))
+                .build();
+    }
+
+    public teamLogoDto getLogo(Long teamId) {
+
+        String uploadDir = "resources/static/logo/";
+        Optional<Team> entity = teamRepository.findById(teamId);
+
+        teamLogoDto res = new teamLogoDto();
+
+        if(!entity.isEmpty()) {
+
+            String logoName = entity.get().getLogo();
+            Resource resource = new FileSystemResource(uploadDir + logoName);
+
+            res.setResource(resource);
+            res.setFilePath(uploadDir + logoName);
+
+            return res;
+
+        } else {
+            return res;
+        }
+
+    }
+
+
+    public String getExtension(String fileName) {
+
+        String allowPattern = ".+\\.(jpg|png|svg)$";
+
+        Pattern pa = Pattern.compile(allowPattern);
+        Matcher ma = pa.matcher(fileName.toLowerCase());
+
+        if(ma.matches()) { // 필터에 맞는 확장자를 가진 파일명이 들어왔을 경우
+            System.out.println("update run");
+            int pos = fileName.lastIndexOf(".");
+            String extension = fileName.substring(pos+1);
+            return extension;
+        }
+        else {
+            return "error";
+        }
+    }
 
 
 }
