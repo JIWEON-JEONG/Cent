@@ -127,6 +127,9 @@ public class PlayerService {
 
         Optional<Player> player = playerRepository.findById(playerId);
 
+        User user = player.get().getUser();
+        user.update(null);
+
         if(player.isEmpty()) {
             return -102;
         } else {
